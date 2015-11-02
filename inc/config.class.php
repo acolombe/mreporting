@@ -766,6 +766,10 @@ class PluginMreportingConfig extends CommonDBTM {
          $crit['show_graph']  = $self->fields['show_graph'];
          $crit['graphtype']   = $self->fields['graphtype'];
          $crit['randname']    = $classname.$name;
+
+         //For Javascript
+         $crit['unit'] = str_replace("'", " ", $crit['unit']);
+         $crit['unit'] = str_replace('"', "", $crit['unit']);
       }
 
       if (DEBUG_MREPORTING) {
