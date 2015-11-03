@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: GLPI - Mreporting plugin 1.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-10-26 10:52+0100\n"
+"PO-Revision-Date: 2015-11-03 09:36+0100\n"
 "Last-Translator: Aleksey Petukhov <lexx015@gmail.com>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
@@ -113,10 +113,6 @@ msgstr "Смотреть график"
 #: inc/config.class.php:111
 msgid "Class"
 msgstr "Класс"
-
-#: inc/config.class.php:123 inc/config.class.php:688
-msgid "Send this report with the notification"
-msgstr "Отправить отчет с уведомлением"
 
 #: inc/config.class.php:161
 msgid "Initialize graphics configuration"

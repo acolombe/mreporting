@@ -54,10 +54,9 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
 
       $images = array();
 
-      $result = $DB->query('SELECT id, name, classname, default_delay
+      $result = $DB->query('SELECT *
                            FROM glpi_plugin_mreporting_configs
-                           WHERE is_notified = 1
-                              AND is_active = 1');
+                           WHERE is_active = 1');
 
       $graphs = array();
       while ($graph = $result->fetch_array()) {

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GLPI Project - Plugin MReporting\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-10-26 10:42+0100\n"
+"PO-Revision-Date: 2015-11-03 09:36+0100\n"
 "Last-Translator: Jérémy MOREAU <jmoreau.dev@gmail.com>\n"
 "Language-Team: French (France) (http://www.transifex.com/teclib/glpi-project-plugin-mreporting/language/fr_FR/)\n"
 "MIME-Version: 1.0\n"
@@ -115,10 +115,6 @@ msgstr "Voir le graphique"
 #: inc/config.class.php:111
 msgid "Class"
 msgstr "Classe"
-
-#: inc/config.class.php:123 inc/config.class.php:688
-msgid "Send this report with the notification"
-msgstr "Envoyer ce rapport avec les notifications"
 
 #: inc/config.class.php:161
 msgid "Initialize graphics configuration"

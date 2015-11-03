@@ -52,7 +52,6 @@ function plugin_mreporting_install() {
    `name` varchar(255) collate utf8_unicode_ci default NULL,
    `classname` varchar(255) collate utf8_unicode_ci default NULL,
    `is_active` tinyint(1) NOT NULL default '0',
-   `is_notified` tinyint(1) NOT NULL default '1',
    `show_graph` tinyint(1) NOT NULL default '0',
    `show_area` tinyint(1) NOT NULL default '0',
    `spline` tinyint(1) NOT NULL default '0',
@@ -158,6 +157,9 @@ function plugin_mreporting_install() {
                 ADD UNIQUE INDEX `profiles_id_reports` (`profiles_id`, `reports`)";
       $DB->query($query);
    }
+
+   // == UPDATE TO 0.90+1.2
+   $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
 
    //== Create directories
    $rep_files_mreporting = GLPI_PLUGIN_DOC_DIR."/mreporting";
