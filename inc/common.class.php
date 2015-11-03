@@ -607,6 +607,10 @@ class PluginMreportingCommon extends CommonDBTM {
       //dynamic instanciation of class passed by 'short_classname' GET parameter
       $classname = 'PluginMreporting'.$opt['short_classname'];
 
+      // For report from an class add, use then removed
+      if (!class_exists($classname)) {
+         return '';
+      }
       //dynamic call of method passed by 'f_name' GET parameter with previously instancied class
       $obj = new $classname($config);
       $datas = $obj->$opt['f_name']($config);
