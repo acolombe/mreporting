@@ -328,7 +328,7 @@ class PluginMreportingDashboard extends CommonDBTM {
       $reportSelectors = PluginMreportingCommon::getReportSelectors(true);
 
       if ($reportSelectors == "") {
-         echo "No configuration for this report";
+         echo __("No configuration for this report", 'mreporting');
          return;
       }
 

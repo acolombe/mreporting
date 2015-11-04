@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GLPI Project - Plugin MReporting\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-03 09:36+0100\n"
+"PO-Revision-Date: 2015-11-04 13:44+0100\n"
 "Last-Translator: Jérémy MOREAU <jmoreau.dev@gmail.com>\n"
 "Language-Team: French (France) (http://www.transifex.com/teclib/glpi-project-plugin-mreporting/language/fr_FR/)\n"
 "MIME-Version: 1.0\n"
@@ -252,6 +252,9 @@ msgstr "Modifications commentaires & date_mod"
 
 msgid "Genericobject plugin logs"
 msgstr "Logs plugin Genericobject"
+
+msgid "No configuration for this report"
+msgstr "Pas de configuration pour ce rapport"
 
 # For reportHbarComputersByAge()
 msgid "< 1 year"

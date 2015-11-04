@@ -239,6 +239,9 @@ msgstr ""
 msgid "Genericobject plugin logs"
 msgstr ""
 
+msgid "No configuration for this report"
+msgstr ""
+
 # For reportHbarComputersByAge()
 msgid "< 1 year"
 msgstr ""
