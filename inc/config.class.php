@@ -711,17 +711,6 @@ class PluginMreportingConfig extends CommonDBTM {
       echo "</td>";
       echo "</tr>";
 
-      echo "<tr class='tab_bg_1'>";
-      echo "<td>";
-      echo __("Send this report with the notification", 'mreporting');
-      echo "</td>";
-      echo "<td>";
-      Dropdown::showYesNo("is_notified",$this->fields["is_notified"]);
-      echo "</td>";
-      echo "<td>&nbsp;</td>";
-      echo "<td>&nbsp;</td>";
-      echo "</tr>";
-
       $this->showFormButtons($options);
 
       echo "</div>";
