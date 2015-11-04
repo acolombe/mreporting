@@ -161,10 +161,13 @@ function plugin_mreporting_install() {
 
    // == UPDATE TO 0.90+1.2
 
-   //TODO : Move that to the new table criterias
-   // In 0.90+1.2, this field is moved to field 'is_active' in glpi_plugin_mreporting_notifications
+   // In 0.90+1.2, this field is "moved" to field 'is_active' in glpi_plugin_mreporting_notifications
    $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
    $migration->migrationOneTable('glpi_plugin_mreporting_configs');
+
+   // This new field is for save a report id
+   $migration->addField('glpi_plugin_mreporting_notifications', 'report');
+   $migration->migrationOneTable('glpi_plugin_mreporting_notifications');
 
    require_once "inc/target.class.php";
    PluginMreportingTarget::install($migration);
