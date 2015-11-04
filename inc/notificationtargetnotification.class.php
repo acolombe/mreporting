@@ -83,7 +83,7 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
                            'date1PluginMreporting'.$graph['class'].$graph['method'] => $graph['start'],
                            'date2PluginMreporting'.$graph['class'].$graph['method'] => $graph['end'],
                            'randname'        => 'PluginMreporting'.$graph['class'].$graph['method'],
-                           'hide_title'      => false); //New code
+                           'hide_title'      => false);
          
          ob_start();
          $common = new PluginMreportingCommon();

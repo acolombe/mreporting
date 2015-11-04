@@ -25,7 +25,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
          $email_processed    = array();
          $email_notprocessed = array();
 
-         $options['entities_id'] = 0; //New code
+         $options['entities_id'] = 0;
          $notificationtarget = NotificationTarget::getInstance($item, $event, $options);
          if (!$notificationtarget) {
             return false;
