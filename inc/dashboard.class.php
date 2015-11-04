@@ -322,7 +322,7 @@ class PluginMreportingDashboard extends CommonDBTM {
       echo $out;
    }
 
-   static function getConfig() {
+   static function getConfig($submit_name = 'saveConfig') {
       PluginMreportingCommon::getSelectorValuesByUser();
 
       $reportSelectors = PluginMreportingCommon::getReportSelectors(true);
@@ -342,7 +342,7 @@ class PluginMreportingDashboard extends CommonDBTM {
       echo "<input type='hidden' name='short_classname' value='".$_REQUEST['short_classname']."' class='submit'>";
       echo "<input type='hidden' name='f_name' value='".$_REQUEST['f_name']."' class='submit'>";
       echo "<input type='hidden' name='gtype' value='".$_REQUEST['gtype']."' class='submit'>";
-      echo "<input type='submit' class='submit' name='saveConfig' value=\"". _sx('button', 'Post') ."\">";
+      echo "<input type='submit' class='submit' name='".$submit_name."' value=\"". _sx('button', 'Post') ."\">";
 
       Html::closeForm();
    }
