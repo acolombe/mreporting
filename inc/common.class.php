@@ -600,7 +600,7 @@ class PluginMreportingCommon extends CommonDBTM {
       if (isset($opt['submit'])) {
          self::saveSelectors($opt['f_name'], $config);
       } elseif (isset($opt['reset'])) {
-         self::resetSelectorsForReport($opt['f_name']);
+         PluginMreportingPreference::resetSelectorsForReport($opt['f_name']);
       }
       self::getSelectorValuesByUser();
 
@@ -1795,26 +1795,6 @@ class PluginMreportingCommon extends CommonDBTM {
          if (!isset($_SESSION['mreporting_values'][$key])) {
              $_SESSION['mreporting_values'][$key] = $value;
          }
-      }
-   }
-
-   static function resetSelectorsForReport($report_name) {
-      global $DB;
-
-      $users_id = Session::getLoginUserID();
-      $selectors = PluginMreportingPreference::checkPreferenceValue('selectors', $users_id);
-
-      if ($selectors) {
-         $values = json_decode(stripslashes($selectors), true);
-         if (isset($values[$report_name])) {
-            unset($values[$report_name]);
-         }
-         $selector = addslashes(json_encode($values));
-
-         $query = "UPDATE `glpi_plugin_mreporting_preferences`
-                   SET `selectors`='$selector'
-                   WHERE `users_id`='$users_id'";
-         $DB->query($query);
       }
    }
 

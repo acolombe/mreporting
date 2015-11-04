@@ -107,6 +107,26 @@ class PluginMreportingPreference extends CommonDBTM {
       return (!empty($files));
    }
 
+   static function resetSelectorsForReport($report_name) {
+      global $DB;
+
+      $users_id = Session::getLoginUserID();
+      $selectors = PluginMreportingPreference::checkPreferenceValue('selectors', $users_id);
+
+      if ($selectors) {
+         $values = json_decode(stripslashes($selectors), true);
+         if (isset($values[$report_name])) {
+            unset($values[$report_name]);
+         }
+         $selector = addslashes(json_encode($values));
+
+         $query = "UPDATE `glpi_plugin_mreporting_preferences`
+                   SET `selectors`='$selector'
+                   WHERE `users_id`='$users_id'";
+         $DB->query($query);
+      }
+   }
+
    function showForm($ID) {
       $this->getFromDB($ID);
 
