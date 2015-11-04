@@ -19,7 +19,9 @@ class PluginMreportingNotification extends Notification {
       $ong = array();
       $this->addDefaultFormTab($ong);
       $this->addStandardTab('PluginMreportingNotificationTarget', $ong, $options);
-      $this->addStandardTab('PluginMreportingCriterias', $ong, $options);
+      if ($this->fields['report'] > 0) {
+         $this->addStandardTab('PluginMreportingCriterias', $ong, $options);
+      }
       $this->addStandardTab('Log', $ong, $options);
 
       return $ong;
@@ -81,6 +83,17 @@ class PluginMreportingNotification extends Notification {
       echo "<td><span id='show_templates'>";
       NotificationTemplate::dropdownTemplates('notificationtemplates_id', $this->fields['itemtype'],
                                               $this->fields['notificationtemplates_id']);
+      echo "</span></td></tr>";
+
+      // Select report
+      echo "<tr class='tab_bg_1'>";
+      echo "<td>". __("Select a report to add", 'mreporting') ."</td>"; //NotificationTemplate::getTypeName(1)
+      echo "<td><span id='show_reports'>";
+      echo PluginMreportingCommon::getSelectAllReports(false, true, $this->fields['report']);
+
+      //NotificationTemplate::dropdownTemplates('notificationtemplates_id', $this->fields['itemtype'],
+      //                                        $this->fields['notificationtemplates_id']);
+
       echo "</span></td></tr>";
 
       $this->showFormButtons($options);
