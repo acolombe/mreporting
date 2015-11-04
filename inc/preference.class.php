@@ -120,7 +120,7 @@ class PluginMreportingPreference extends CommonDBTM {
          }
          $selector = addslashes(json_encode($values));
 
-         $query = "UPDATE `glpi_plugin_mreporting_preferences`
+         $query = "UPDATE `{$this->getTable()}`
                    SET `selectors`='$selector'
                    WHERE `users_id`='$users_id'";
          $DB->query($query);
