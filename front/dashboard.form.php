@@ -20,11 +20,9 @@ if (isset($_POST['saveConfig'])) {
 
 } else if (isset($_REQUEST['saveCriterias'])) {
 
-    //TODO : Need to saved in table (in JSON criterias like in preferences table)
-
     // Save
-    PluginMreportingCriterias::saveSelectors($_POST['f_name']);
-
+    $config = array('randname' => 'PluginMreporting'. $_REQUEST['short_classname'] . $_POST['f_name']);
+    PluginMreportingCriterias::saveSelectors($_POST['f_name'], $config);
 
     // Use saved values
     /*

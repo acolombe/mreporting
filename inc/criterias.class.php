@@ -6,13 +6,17 @@ class PluginMreportingCriterias extends CommonDBTM {
       return _n("Criterion", "Criteria", $nb);
    }
 
+   static function getFormURL($full = true) {
+      global $CFG_GLPI;
+
+      //TODO : quick and dirty 'target'
+      return $CFG_GLPI['root_doc'] . "/plugins/mreporting/front/dashboard.form.php";
+   }
+
 	static function install(Migration $migration) {
 		global $DB;
 
-		$table = getTableForItemType(__CLASS__);
-
-		//TODO : Need more fields in database
-		$query = "CREATE TABLE `$table` (
+		$query = "CREATE TABLE `{$this->getTable()}` (
 						`id` INT(11) NOT NULL AUTO_INCREMENT,
 						`selectors` VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (`id`)
@@ -26,24 +30,8 @@ class PluginMreportingCriterias extends CommonDBTM {
 		$migration->dropTable(getTableForItemType(__CLASS__));
 	}
 
-   static function saveSelectors($graphname, $config = array()) {
-
-      //TODO : add dates to this array (here ?)
-      $remove_fields = array('short_classname', 'f_name', 'gtype', 'submit');
-
-      $values = array();
-
-      foreach ($_REQUEST as $key => $value) {
-         if (!preg_match("/^_/", $key) && !in_array($key, $remove_fields) ) {
-            $values[$key] = $value;
-         }
-         if (empty($value)) {
-            unset($_REQUEST[$key]);
-         }
-      }
-
-      //clean unmodified date
-      /*
+   /*
+   static function cleanUnmodifiedDate($config = array()) {
       if (isset($config['randname'])) {
          if (isset($_REQUEST['date1'.$config['randname']])
             && $_REQUEST['date1'.$config['randname']]
@@ -56,59 +44,117 @@ class PluginMreportingCriterias extends CommonDBTM {
             unset($_REQUEST['date2'.$config['randname']]);
          }
       }
-      */
+   }
+   */
+
+   static function cleanBeginDate($config = array()) {
+      if (isset($config['randname']) && isset($_REQUEST['date1'.$config['randname']])) {
+         unset($_REQUEST['date1'.$config['randname']]);
+      }
+   }
+
+   static function cleanEndDate($config = array()) {
+      if (isset($config['randname']) && isset($_REQUEST['date2'.$config['randname']])) {
+         unset($_REQUEST['date2'.$config['randname']]);
+      }
+   }
+
+   static function saveSelectors($graphname, $config = array()) {
+
+      $notification_id = $_REQUEST['notification_id'];
+
+      //TODO : add dates to this array (here ?)
+      $remove_fields = array('short_classname', 'f_name', 'gtype', 
+         'saveCriterias', '_glpi_csrf_token',
+         'notification_id',
+         '_date1'.$config['randname'], '_date2'.$config['randname'],
+         //'submit'
+      );
+
+      $values = array();
+
+      foreach ($_REQUEST as $key => $value) {
+         if (!preg_match("/^_/", $key) && !in_array($key, $remove_fields) ) {
+            $values[$key] = $value;
+         }
+
+         // Simplication of $_REQUEST
+         if (empty($value)) {
+            unset($_REQUEST[$key]);
+         }
+      }
+
+      //TODO : Need to work on $values (only)
+
+      //clean unmodified date
+      //self::cleanUnmodifiedDate($config);
+
+      //clean begin date
+      self::cleanBeginDate($config);
+
+      //clean end date
+      self::cleanEndDate($config);
+
       $selectors = $values;
 
-      $json = addslashes(json_encode($selectors));
-
-      $notification_id = 1; //DEBUG
+      $input = array('notification_id' => $notification_id,
+                     'selectors'       => addslashes(json_encode($selectors)));
 
       $criteria = new self();
-      if ($criteria->getFromDB(1)) {
-         $criteria->update(array('notification_id' => $notification_id,
-                           'selectors' => $json));
+      if ($criteria->getFromDBByQuery(" WHERE notification_id = '$notification_id")) {
+         $input['id'] = $criteria->getID();
+         $criteria->update($input);
       } else {
-         $criteria->add(array('notification_id' => $notification_id,
-                              'selectors' => $json));
+         $criteria->add($input);
       }
+      //Note : Add that to locale plugin
+      Session::addMessageAfterRedirect(__('Saved', 'mreporting'), true);
 
-      $_SESSION['mreporting_values'] = $values;
+      //$_SESSION['mreporting_values'] = $values;
    }
 
-   static function getCriteriaValueByNotification($notification_id) { //...ByReport ?
-
-      $obj = new self();
-      $found = $obj->find("notification_id = ".$notification_id);
-      if (empty($found)) {
-         return array();
+   /**
+    *
+    * Get a preference for an notification_id
+    * @param unknown_type preference field to get
+    * @param unknown_type user ID
+    * @return preference value or 0
+    */
+   static function checkPreferenceValue($field, $notification_id = 0) {
+      $data = getAllDatasFromTable(self::getTable(), "`notification_id`='$notification_id'");
+      if (empty($data)) {
+         return 0;
       }
 
-      foreach ($found as $criteria) {
-         $sel = json_decode(stripslashes($criteria['selectors']), true);
-         return $sel;
-      }
+      $first = array_pop($data);
 
+      return $first[$field];
    }
 
-   static function getSelectorValuesByUser() {
+   static function getSelectorValuesByNotification_id($notification_id) {
 
       $myvalues  = isset($_SESSION['mreporting_values']) ? $_SESSION['mreporting_values'] : array();
 
-      $selectors = PluginMreportingPreference::checkPreferenceValue('selectors', Session::getLoginUserID());
+      $selectors = self::checkPreferenceValue('selectors', $notification_id);
       if ($selectors) {
          $values = json_decode(stripslashes($selectors), true);
+
+         foreach ($values as $key => $value) {
+            $myvalues[$key] = $value;
+         }
+         /*
          if (isset($values[$_REQUEST['f_name']])) {
             foreach ($values[$_REQUEST['f_name']] as $key => $value) {
                $myvalues[$key] = $value;
             }
          }
+         */
       }
-      $_SESSION['mreporting_values'] = $myvalues;
+
+      return $myvalues;
    }
 
-   /**
-    * Parse and include selectors functions
-    */
+   //Adapted from getReportSelectors()
    static function getReportSelectors() {
       ob_start();
 
@@ -155,67 +201,88 @@ class PluginMreportingCriterias extends CommonDBTM {
    }
 
    //Adapted from getConfig() in dashboard class
-   static function getConfig() {
+   static function showFormCriteriasFilters($notification_id) {
+      
+      //Saved actual mreporting_values session
+      $saved_session = isset($_SESSION['mreporting_values']) ? $_SESSION['mreporting_values'] : array();
 
-      //$notification_id = 1; //DEBUG
-      //$criteria = self::getCriteriaValueByNotification($notification_id);
-
-      self::getSelectorValuesByUser(); //new code
-      //PluginMreportingCommon::getSelectorValuesByUser();
+      // Rewrite mreporting_values session (temporary)
+      $_SESSION['mreporting_values'] = self::getSelectorValuesByNotification_id($notification_id);
+      //var_dump($_SESSION['mreporting_values']);
 
       //-> quasi vide mais permet d'obtenir 'reportGlineBacklogs' (nom du rapport)
       //
 
-      //$reportSelectors = PluginMreportingCommon::getReportSelectors(true);
+      $reportSelectors = PluginMreportingCommon::getReportSelectors(true);
+
+      // == Display filters ==
+
+      $graphname = $_REQUEST['f_name'];
+
+      //TODO : Need to use real values
+      $_SESSION['mreporting_selector'][$graphname] =
+         array('dateinterval', 'period', 'backlogstates', 'multiplegrouprequest',
+               'userassign', 'category', 'multiplegroupassign');
+
+
       $reportSelectors = self::getReportSelectors();
+
+      //Restore mreporting_values session
+      $_SESSION['mreporting_values'] = $saved_session;
 
       if ($reportSelectors == "") {
          echo __("No configuration for this report", 'mreporting');
+         echo "<br><br>";
+
          return;
       }
 
-      echo "<form method='POST' action='" . $_REQUEST['target'] . "' name='form' id='mreporting_date_selector'>";
+      echo "<form method='POST' action='".self::getFormURL()."' name='form'>";
 
       echo "<table class='tab_cadre_fixe'>";
       echo "<tr class='tab_bg_1'>";
       echo $reportSelectors;
       echo "</table>";
 
-      echo "<input type='hidden' name='short_classname' value='".$_REQUEST['short_classname']."' class='submit'>";
-      echo "<input type='hidden' name='f_name' value='".$_REQUEST['f_name']."' class='submit'>";
-      echo "<input type='hidden' name='gtype' value='".$_REQUEST['gtype']."' class='submit'>";
-      echo "<input type='submit' class='submit' name='saveConfig' value=\"". _sx('button', 'Post') ."\">";
+      echo "<input type='hidden' name='short_classname' value='".$_REQUEST['short_classname']."'>";
+      echo "<input type='hidden' name='f_name' value='".$_REQUEST['f_name']."''>";
+      //echo "<input type='hidden' name='gtype' value='".$_REQUEST['gtype']."'>";
+      echo "<input type='hidden' name='notification_id' value='".$notification_id."'>";
+
+      //saveCriterias ->
+      echo "<input type='submit' class='submit' name='saveCriterias' value='". _sx('button', 'Post') ."'>";
 
       Html::closeForm();
+   }
+
+   static function getReportInfosAssociatedTo($notification_id) {
+      $notification = new PluginMreportingNotification();
+      if ($notification->getFromDB($notification_id)) {
+
+         $config = new PluginMreportingConfig();
+         if ($config->getFromDB($notification->fields['report'])) {
+
+            $_REQUEST['f_name']           = $config->getName(); //'reportGlineBacklogs';
+            $_REQUEST['short_classname']  = str_replace('PluginMreporting', '', $config->fields["classname"]); //'Helpdeskplus';
+            //$_REQUEST['gtype']            = 'gline';
+
+            //Note : useless
+            return $config->fields;
+         }
+      }
    }
 
    static function displayTabContentForItem(CommonGLPI $item, $tabnum=1, $withtemplate=0) {
    	global $CFG_GLPI;
 
-      //if ($item->getType() == 'PluginMreportingNotification') { //OK
-
-         // == ACTIONS ==
-         //Note : not work -> move to /front/dashboard.php (sauf 'reset')
-         /*
-         if (isset($_REQUEST['submit'])) {
-            self::saveSelectors($_REQUEST['f_name'], $config); //IMPORTANT
-	      } //else if (isset($_REQUEST['reset'])) {
-	      //   PluginMreportingPreference::resetSelectorsForReport($_REQUEST['f_name']);
-	      //}
-	      */
-
-			//Show date selector
+      if ($item->getType() == 'PluginMreportingNotification') {
          echo "<div class='graph_navigation'>";
+         self::getReportInfosAssociatedTo($item->getID());
 
-      		//'%2Fglpi-090-git%2Fglpi%2Fplugins%2Fmreporting%2Ffront%2Fdashboard.form.php';
-      	$_REQUEST['target'] 				= $CFG_GLPI['root_doc']."/plugins/mreporting/front/dashboard.form.php"; //quick and dirty 'target'
-      	$_REQUEST['f_name'] 				= 'reportGlineBacklogs';
-      	$_REQUEST['short_classname']	= 'Helpdeskplus';
-      	$_REQUEST['gtype']				= 'gline';
-
-			self::getConfig();
+			self::showFormCriteriasFilters($item->getID());
          echo "</div>";
-      //}
+      }
+
       return true;
    }
 
