@@ -104,7 +104,8 @@ function plugin_mreporting_install() {
          VALUES (NULL,'PluginMreportingConfig','8','8','0');";
    }
 
-    $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_notifications` (
+   //Existed before 0.90+1.2, but used in 0.90+1.2
+   $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_notifications` (
       `id` int(11) NOT NULL auto_increment,
       `entities_id` int(11) NOT NULL default '0',
       `is_recursive` tinyint(1) NOT NULL default '0',
@@ -116,8 +117,8 @@ function plugin_mreporting_install() {
       `comment` text collate utf8_unicode_ci,
       `date_mod` datetime default NULL,
       `is_deleted` tinyint(1) NOT NULL default '0',
-      PRIMARY KEY  (`id`)
-      ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+      PRIMARY KEY (`id`)
+      ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
    foreach($queries as $query) {
       $DB->query($query);
@@ -159,7 +160,20 @@ function plugin_mreporting_install() {
    }
 
    // == UPDATE TO 0.90+1.2
+
+   //TODO : Move that to the new table criterias
+   // In 0.90+1.2, this field is moved to field 'is_active' in glpi_plugin_mreporting_notifications
    $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
+   $migration->migrationOneTable('glpi_plugin_mreporting_configs');
+
+   require_once "inc/target.class.php";
+   PluginMreportingTarget::install($migration);
+
+   // Delete old table for create with other fields
+   $migration->dropTable("glpi_plugin_mreporting_notifications");
+   
+   require_once "inc/notification.class.php";
+   PluginMreportingNotification::install($migration);
 
    //== Create directories
    $rep_files_mreporting = GLPI_PLUGIN_DOC_DIR."/mreporting";
@@ -218,6 +232,10 @@ function plugin_mreporting_uninstall() {
 
    require_once "inc/notification.class.php";
    PluginMreportingNotification::uninstall();
+
+   // 0.90+1.2
+   require_once "inc/target.class.php";
+   PluginMreportingTarget::uninstall();
 
    return true;
 }

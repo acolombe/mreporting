@@ -73,8 +73,8 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
                                                                     $event, $options)) {
                            //Send notification to the user
                            if ($label == '') {
-                              PluginMreportingNotification::send($template->getDataToSend($notificationtarget, $tid,
-                                                                          $users_infos, $options), $notificationtarget->additionalData);
+                              PluginMreportingNotification::send(array_merge($template->getDataToSend($notificationtarget, $tid,
+                                                                          $users_infos, $options), $notificationtarget->additionalData));
                            } else {
                               $notificationtarget->getFromDB($target['id']);
                               echo "<tr class='tab_bg_2'>";

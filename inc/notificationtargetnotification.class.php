@@ -1,5 +1,7 @@
 <?php
-
+/**
+  * Special class
+  **/
 class PluginMreportingNotificationTargetNotification extends NotificationTarget {
 
    var $additionalData;
@@ -138,4 +140,5 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       // Return the generated filename
       return $file_name;
    }
+
 }

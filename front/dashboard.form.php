@@ -9,7 +9,6 @@ Session::checkLoginUser();
 
 if (isset($_POST['saveConfig'])) {
 
-
     PluginMreportingCommon::saveSelectors($_POST['f_name']);
 
     $_REQUEST['f_name'] = $_POST['f_name'];
@@ -18,6 +17,23 @@ if (isset($_POST['saveConfig'])) {
 
     Html::back();
 
+
+} else if (isset($_REQUEST['saveCriterias'])) {
+
+    //TODO : Need to saved in table (in JSON criterias like in preferences table)
+
+    // Save
+    /* PluginMreportingCommon::saveSelectors($_POST['f_name']); */
+
+
+    // Use saved values
+    /*
+    $_REQUEST['f_name'] = $_POST['f_name'];
+    $_REQUEST['short_classname'] = $_POST['short_classname'];
+    PluginMreportingCommon::getSelectorValuesByUser();
+    */
+
+    Html::back();
 
 } else if (isset($_POST['addReports'])) {
 

@@ -1,10 +1,7 @@
 <?php
 
-class PluginMreportingNotification extends CommonDBTM {
+class PluginMreportingNotification extends Notification {
 
-   /**
-    * @var boolean activate the history for the plugin
-    */
    public $dohistory = true;
 
    /**
@@ -16,6 +13,78 @@ class PluginMreportingNotification extends CommonDBTM {
     */
    static function getTypeName($nb = 0) {
       return __("More Reporting", 'mreporting');
+   }
+
+   function defineTabs($options=array()) {
+      $ong = array();
+      $this->addDefaultFormTab($ong);
+      $this->addStandardTab('PluginMreportingNotificationTarget', $ong, $options);
+      $this->addStandardTab('PluginMreportingCriterias', $ong, $options);
+      $this->addStandardTab('Log', $ong, $options);
+
+      return $ong;
+   }
+
+   function showForm($ID, $options=array()) {
+      global $CFG_GLPI;
+
+      $this->initForm($ID, $options);
+      $this->showFormHeader($options);
+
+      echo "<tr class='tab_bg_1'><td>" . __('Name') . "</td>";
+      echo "<td>";
+      Html::autocompletionTextField($this, "name");
+      echo "</td>";
+
+      echo "<td rowspan='6' class='middle right'>".__('Comments')."</td>";
+      echo "<td class='center middle' rowspan='6'><textarea cols='45' rows='9' name='comment' >".
+             $this->fields["comment"]."</textarea></td></tr>";
+
+      echo "<tr class='tab_bg_1'><td>" . __('Active') . "</td>";
+      echo "<td>";
+      Dropdown::showYesNo('is_active', $this->fields['is_active']);
+      echo "</td></tr>";
+
+      echo "<tr class='tab_bg_1'><td>" . __('Type') . "</td>";
+      echo "<td>";
+      if (!Session::haveRight(static::$rightname, UPDATE)) {
+         $itemtype = $this->fields['itemtype'];
+         echo $itemtype::getTypeName(1);
+         $rand ='';
+      } else {
+         $rand = Dropdown::showItemTypes('itemtype',
+                                         array("PluginMreportingNotification"), //Only PluginMreportingNotification
+                                         array('value' => $this->fields['itemtype']));
+      }
+
+      $params = array('itemtype' => '__VALUE__');
+      Ajax::updateItemOnSelectEvent("dropdown_itemtype$rand", "show_events",
+                                    $CFG_GLPI["root_doc"]."/ajax/dropdownNotificationEvent.php",
+                                    $params);
+      Ajax::updateItemOnSelectEvent("dropdown_itemtype$rand", "show_templates",
+                                    $CFG_GLPI["root_doc"]."/ajax/dropdownNotificationTemplate.php",
+                                    $params);
+      echo "</td></tr>";
+
+      echo "<tr class='tab_bg_1'><td>" . __('Notification method') . "</td>";
+      echo "<td>";
+      self::dropdownMode(array('value'=>$this->fields['mode']));
+      echo "</td></tr>";
+
+      echo "<tr class='tab_bg_1'><td>" . NotificationEvent::getTypeName(1) . "</td>";
+      echo "<td><span id='show_events'>";
+      NotificationEvent::dropdownEvents($this->fields['itemtype'],
+                                        array('value'=>$this->fields['event']));
+      echo "</span></td></tr>";
+
+      echo "<tr class='tab_bg_1'><td>". NotificationTemplate::getTypeName(1)."</td>";
+      echo "<td><span id='show_templates'>";
+      NotificationTemplate::dropdownTemplates('notificationtemplates_id', $this->fields['itemtype'],
+                                              $this->fields['notificationtemplates_id']);
+      echo "</span></td></tr>";
+
+      $this->showFormButtons($options);
+      return true;
    }
 
    /**
@@ -66,6 +135,33 @@ class PluginMreportingNotification extends CommonDBTM {
               VALUES (1, 1, ' . $notification_id . ');');
       }
 
+      //From Notification
+      $query = "CREATE TABLE `".getTableForItemType(__CLASS__)."` (
+                  `id` INT(11) NOT NULL AUTO_INCREMENT,
+                  `name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
+                  `entities_id` INT(11) NOT NULL DEFAULT '0',
+                  `itemtype` VARCHAR(100) NOT NULL COLLATE 'utf8_unicode_ci',
+                  `event` VARCHAR(255) NOT NULL COLLATE 'utf8_unicode_ci',
+                  `mode` VARCHAR(255) NOT NULL COLLATE 'utf8_unicode_ci',
+                  `notificationtemplates_id` INT(11) NOT NULL DEFAULT '0',
+                  `comment` TEXT NULL COLLATE 'utf8_unicode_ci',
+                  `is_recursive` TINYINT(1) NOT NULL DEFAULT '0',
+                  `is_active` TINYINT(1) NOT NULL DEFAULT '0',
+                  `date_mod` DATETIME NULL DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  INDEX `name` (`name`),
+                  INDEX `itemtype` (`itemtype`),
+                  INDEX `entities_id` (`entities_id`),
+                  INDEX `is_active` (`is_active`),
+                  INDEX `date_mod` (`date_mod`),
+                  INDEX `is_recursive` (`is_recursive`),
+                  INDEX `notificationtemplates_id` (`notificationtemplates_id`)
+               )
+               COLLATE='utf8_unicode_ci'
+               ENGINE=MyISAM";
+      $DB->query($query);
+
+      //useless
       return array('success' => true);
    }
 
@@ -124,10 +220,10 @@ class PluginMreportingNotification extends CommonDBTM {
    /**
     * @param $mailing_options
    **/
-   static function send($mailing_options, $additional_options) {
+   static function send($mailing_options) {
 
       $mail = new PluginMreportingNotificationMail();
-      $mail->sendNotification(array_merge($mailing_options, $additional_options));
+      $mail->sendNotification($mailing_options);
    }
 
    /**
