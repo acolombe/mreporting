@@ -1679,17 +1679,24 @@ class PluginMreportingCommon extends CommonDBTM {
     */
    static function getReportSelectors($export = false) {
       ob_start();
+
       self::addToSelector();
+
       $graphname = $_REQUEST['f_name'];
-      if(!isset($_SESSION['mreporting_selector'][$graphname])
-         || empty($_SESSION['mreporting_selector'][$graphname])) return;
+
+      if (!isset($_SESSION['mreporting_selector'][$graphname])
+         || empty($_SESSION['mreporting_selector'][$graphname])) {
+         return;
+      }
 
       $classname = 'PluginMreporting'.$_REQUEST['short_classname'];
-      if(!class_exists($classname)) return;
+      if (!class_exists($classname)) {
+         return;
+      }
 
       $i = 1;
       foreach ($_SESSION['mreporting_selector'][$graphname] as $selector) {
-         if ($i%4 == 0) {
+         if ($i % 4 == 0) {
             echo '</tr><tr class="tab_bg_1">';
          }
          $selector = 'selector'.ucfirst($selector);
@@ -1706,7 +1713,8 @@ class PluginMreportingCommon extends CommonDBTM {
          $classselector::$selector();
          echo '</td>';
       }
-      while($i%4 != 0) {
+
+      while ($i % 4 != 0) {
          $i++;
          echo '<td>&nbsp;</td>';
       }
