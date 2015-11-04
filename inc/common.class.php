@@ -227,7 +227,7 @@ class PluginMreportingCommon extends CommonDBTM {
       echo "</table>";
    }
 
-   static function getSelectAllReports($onchange = false, $setIdInOptionsValues = false) {
+   static function getSelectAllReports($onchange = false, $setIdInOptionsValues = false, $report_selected = -1) {
 
       $common = new self();
       $reports = $common->getAllReports(true);
@@ -239,7 +239,14 @@ class PluginMreportingCommon extends CommonDBTM {
       $js_onchange = $onchange ? " onchange='window.location.href=this.options[this.selectedIndex].value'" : "";
 
       $select  = "<select name='report' $js_onchange>";
-      $select .= "<option value='-1' selected>".Dropdown::EMPTY_VALUE."</option>";
+      
+
+      if ($report_selected == -1) {
+         $select .= "<option value='-1' selected>";
+      } else {
+         $select .= "<option value='-1'>";
+      }
+      $select .= Dropdown::EMPTY_VALUE."</option>";
 
       foreach($reports as $classname => $report) {
          $graphs = array();
@@ -280,7 +287,8 @@ class PluginMreportingCommon extends CommonDBTM {
                               $option_value = $value['id'];
                              }
                              $icon = self::getIcon($value['function']);
-                             $tests[$value['title']] = "<option value='$option_value' title=\"". Html::cleanInputText($comment).
+                             $selected = ($report_selected == $option_value) ? " selected " : "";
+                             $tests[$value['title']] = "<option value='$option_value' $selected title=\"". Html::cleanInputText($comment).
                                        "\">&nbsp;&nbsp;&nbsp;".$icon."&nbsp;".
                                        $value["title"]."</option>";
                          }
