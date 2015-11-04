@@ -23,7 +23,7 @@ if (isset($_POST['saveConfig'])) {
     //TODO : Need to saved in table (in JSON criterias like in preferences table)
 
     // Save
-    /* PluginMreportingCommon::saveSelectors($_POST['f_name']); */
+    PluginMreportingCriterias::saveSelectors($_POST['f_name']);
 
 
     // Use saved values
