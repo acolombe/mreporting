@@ -414,10 +414,9 @@ class PluginMreportingCommon extends CommonDBTM {
    function showExportForm($opt) {
       $classname = $opt["classname"];
       if ($classname) {
-         echo "<div align='center'>";
+         $target = "export.php?switchto=odtall&classname=".$classname;
 
-         echo "<form method='POST' action='export.php?switchto=odtall&classname=".$classname."'
-                     id='exportform' name='exportform'>\n";
+         echo "<form method='POST' action='$target' id='exportform' name='exportform'>";
 
          echo "<table class='tab_cadre_fixe'>";
 
@@ -506,7 +505,6 @@ class PluginMreportingCommon extends CommonDBTM {
          echo "</td></tr>";
          echo "</table>";
          Html::closeForm();
-         echo "</div>";
 
          echo "<script type='text/javascript'>
             $('#export_submit').on('click', function () {
