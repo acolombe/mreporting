@@ -267,6 +267,18 @@ function plugin_mreporting_MassiveActionsFieldsDisplay($options=array()) {
    $table = $options['options']['table'];
    $field = $options['options']['field'];
    $linkfield = $options['options']['linkfield'];
+
+   //Fixed a GLPI bug exist in Notification class
+
+   //if ($options['itemtype'] == 'PluginMreportingNotification') {
+      if ($table.".".$field == 'glpi_notificationtemplates.name') {
+         Dropdown::show('NotificationTemplate', array(
+            'condition' => "itemtype = '".$options['itemtype']."'")
+         );
+         return true;
+      }
+   //}
+
    if ($table == getTableForItemType($options['itemtype'])) {
 
       // Table fields
