@@ -152,7 +152,7 @@ function plugin_mreporting_install() {
    $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
    $migration->migrationOneTable('glpi_plugin_mreporting_configs');
 
-   require_once "inc/target.class.php";
+   require_once "inc/notificationtarget.class.php";
    PluginMreportingNotificationTarget::install($migration);
 
    //== Create directories
@@ -215,7 +215,7 @@ function plugin_mreporting_uninstall() {
    PluginMreportingNotification::uninstall($migration);
 
    // 0.90+1.2
-   require_once "inc/target.class.php";
+   require_once "inc/notificationtarget.class.php";
    PluginMreportingNotificationTarget::uninstall($migration);
 
    return true;
