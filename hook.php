@@ -172,7 +172,7 @@ function plugin_mreporting_install() {
    $migration->migrationOneTable('glpi_plugin_mreporting_notifications');
 
    require_once "inc/target.class.php";
-   PluginMreportingTarget::install($migration);
+   PluginMreportingNotificationTarget::install($migration);
 
    // Delete old table for create with other fields
    $migration->dropTable("glpi_plugin_mreporting_notifications");
@@ -212,7 +212,9 @@ function plugin_mreporting_install() {
 function plugin_mreporting_uninstall() {
    global $DB;
 
-   $migration = new Migration("2.3.0");
+   $version   = plugin_version_mreporting();
+   $migration = new Migration($version['version']);
+
    $tables = array("glpi_plugin_mreporting_profiles",
                    "glpi_plugin_mreporting_configs",
                    "glpi_plugin_mreporting_preferences",
@@ -239,7 +241,7 @@ function plugin_mreporting_uninstall() {
 
    // 0.90+1.2
    require_once "inc/target.class.php";
-   PluginMreportingTarget::uninstall();
+   PluginMreportingNotificationTarget::uninstall($migration);
 
    return true;
 }
