@@ -27,6 +27,9 @@ class PluginMreportingNotification extends Notification {
       $this->initForm($ID, $options);
       $this->showFormHeader($options);
 
+      // Display only event(s) and templates associated to Mreporting notification
+      $this->fields['itemtype'] = __CLASS__;
+
       echo "<tr class='tab_bg_1'><td>" . __('Name') . "</td>";
       echo "<td>";
       Html::autocompletionTextField($this, "name");
@@ -44,7 +47,7 @@ class PluginMreportingNotification extends Notification {
       echo "<tr class='tab_bg_1'><td>" . __('Type') . "</td>";
       echo "<td>";
       $rand = Dropdown::showItemTypes('itemtype',
-                                      array("PluginMreportingNotification"), //Only PluginMreportingNotification
+                                      array($this->fields['itemtype']), //Only PluginMreportingNotification
                                       array('value' => $this->fields['itemtype']));
 
       $params = array('itemtype' => '__VALUE__');
