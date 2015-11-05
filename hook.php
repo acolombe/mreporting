@@ -185,6 +185,16 @@ function plugin_mreporting_uninstall() {
    require_once "inc/criterias.class.php";
    PluginMreportingCriterias::uninstall($migration);
 
+   // == Minor uninstall ==
+
+   // Delete global view and personal view
+   $query = "DELETE FROM glpi_displaypreferences WHERE itemtype LIKE 'PluginMreporting%'";
+   $DB->query($query);
+
+   // Clean log
+   $query = "DELETE FROM glpi_logs WHERE itemtype LIKE 'PluginMreporting%' OR itemtype_link LIKE 'PluginMreporting%'";
+   $DB->query($query);
+
    return true;
 }
 
