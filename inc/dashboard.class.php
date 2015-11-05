@@ -29,6 +29,23 @@
 
 class PluginMreportingDashboard extends CommonDBTM {
 
+   static function install(Migration $migration) {
+      global $DB;
+
+      $query = "CREATE TABLE IF NOT EXISTS `{$this->getTable()}` (
+                  `id` int(11) NOT NULL auto_increment,
+                  `users_id` int(11) NOT NULL,
+                  `reports_id`int(11) NOT NULL,
+                  `configuration` VARCHAR(500) default NULL,
+                  PRIMARY KEY (`id`)
+               ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+      $DB->query($query);
+   }
+
+   static function uninstall(Migration $migration) {
+      $migration->dropTable($this->getTable());
+   }
+
    function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
       if (get_class($item) == 'Central' 
          && PluginMreportingCommon::canAccessAtLeastOneReport($_SESSION['glpiactiveprofile']['id'])) {

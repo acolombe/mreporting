@@ -35,9 +35,14 @@ function plugin_mreporting_install() {
 
    include_once(GLPI_ROOT."/plugins/mreporting/inc/profile.class.php");
 
+   require_once "inc/dashboard.class.php";
+   PluginMreportingDashboard::install($migration);
+
+   require_once "inc/config.class.php";
+   PluginMreportingConfig::install($migration);
+
    $queries = array();
 
-   //create profiles table
    $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_profiles` (
       `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
       `profiles_id` VARCHAR(45) NOT NULL,
@@ -46,17 +51,6 @@ function plugin_mreporting_install() {
       UNIQUE `profiles_id_reports` (`profiles_id`, `reports`)
       )
       ENGINE = MyISAM;";
-
-   $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_dashboards` (
-   `id` int(11) NOT NULL auto_increment,
-   `users_id` int(11) NOT NULL,
-   `reports_id`int(11) NOT NULL,
-   `configuration` VARCHAR(500) default NULL,
-   PRIMARY KEY (`id`)
-   ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
-
-   require_once "inc/config.class.php";
-   PluginMreportingConfig::install($migration);
 
    $queries[] = "CREATE TABLE  IF NOT EXISTS `glpi_plugin_mreporting_preferences` (
    `id` int(11) NOT NULL auto_increment,
@@ -164,7 +158,6 @@ function plugin_mreporting_uninstall() {
    $tables = array("glpi_plugin_mreporting_profiles",
                    "glpi_plugin_mreporting_preferences",
                    "glpi_plugin_mreporting_notifications",
-                   "glpi_plugin_mreporting_dashboards"
    );
 
    foreach ($tables as $table) {
@@ -173,6 +166,9 @@ function plugin_mreporting_uninstall() {
 
    Toolbox::deleteDir(GLPI_PLUGIN_DOC_DIR."/mreporting/notifications");
    Toolbox::deleteDir(GLPI_PLUGIN_DOC_DIR."/mreporting");
+
+   require_once "inc/dashboard.class.php";
+   PluginMreportingDashboard::uninstall($migration);
 
    require_once "inc/config.class.php";
    PluginMreportingConfig::uninstall($migration);
