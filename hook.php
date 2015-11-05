@@ -235,7 +235,7 @@ function plugin_mreporting_uninstall() {
    }
 
    require_once "inc/notification.class.php";
-   PluginMreportingNotification::uninstall();
+   PluginMreportingNotification::uninstall($migration);
 
    // 0.90+1.2
    require_once "inc/target.class.php";

@@ -24,7 +24,7 @@ class PluginMreportingNotificationTarget extends NotificationTarget {
 		global $DB;
 
 		//From glpi_notificationtargets
-		$query = "CREATE TABLE `".getTableForItemType(__CLASS__)."` (
+		$query = "CREATE TABLE `{$this->getTable()}` (
 						`id` INT(11) NOT NULL AUTO_INCREMENT,
 						`items_id` INT(11) NOT NULL DEFAULT '0',
 						`type` INT(11) NOT NULL DEFAULT '0',

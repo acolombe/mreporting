@@ -87,13 +87,10 @@ class PluginMreportingNotification extends Notification {
 
       // Select report
       echo "<tr class='tab_bg_1'>";
-      echo "<td>". __("Select a report to add", 'mreporting') ."</td>"; //NotificationTemplate::getTypeName(1)
+      //TODO : Change string
+      echo "<td>". __("Select a report to add", 'mreporting') ."</td>";
       echo "<td><span id='show_reports'>";
       echo PluginMreportingCommon::getSelectAllReports(false, true, $this->fields['report']);
-
-      //NotificationTemplate::dropdownTemplates('notificationtemplates_id', $this->fields['itemtype'],
-      //                                        $this->fields['notificationtemplates_id']);
-
       echo "</span></td></tr>";
 
       $this->showFormButtons($options);
@@ -105,7 +102,7 @@ class PluginMreportingNotification extends Notification {
     *
     * @return array 'success' => true on success
     */
-   static function install($migration) {
+   static function install(Migration $migration) {
       global $DB;
 
       // Création du template de la notification
@@ -149,7 +146,7 @@ class PluginMreportingNotification extends Notification {
       }
 
       //From Notification
-      $query = "CREATE TABLE `".getTableForItemType(__CLASS__)."` (
+      $query = "CREATE TABLE `{$this->getTable()}` (
                   `id` INT(11) NOT NULL AUTO_INCREMENT,
                   `name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
                   `entities_id` INT(11) NOT NULL DEFAULT '0',
@@ -183,24 +180,23 @@ class PluginMreportingNotification extends Notification {
     *
     * @return array 'success' => true on success
     */
-   static function uninstall() {
+   static function uninstall(Migration $migration) {
       global $DB;
+
+      //TODO : read and check this code
 
       $queries = array();
 
       // Remove NotificationTargets and Notifications
       $notification = new Notification();
-      $result = $notification->find("itemtype = 'PluginMreportingNotification'");
-      foreach ($result as $row) {
-         $notification_id = $row['id'];
-         $queries[] = "DELETE FROM glpi_notificationtargets WHERE notifications_id = " . $notification_id;
-         $queries[] = "DELETE FROM glpi_notifications WHERE id = " . $notification_id;
+      foreach ($notification->find("itemtype = 'PluginMreportingNotification'") as $notif) {
+         $queries[] = "DELETE FROM glpi_notificationtargets WHERE notifications_id = " . $notif['id'];
+         $queries[] = "DELETE FROM glpi_notifications WHERE id = " . $notif['id'];
       }
 
       // Remove NotificationTemplateTranslations and NotificationTemplates
       $template = new NotificationTemplate();
-      $result = $template->find("itemtype = 'PluginMreportingNotification'");
-      foreach ($result as $row) {
+      foreach ($template->find("itemtype = 'PluginMreportingNotification'") as $row) {
          $template_id = $row['id'];
          $queries[] = "DELETE FROM glpi_notificationtemplatetranslations
                         WHERE notificationtemplates_id = " . $template_id;
@@ -216,7 +212,7 @@ class PluginMreportingNotification extends Notification {
    }
 
    /**
-    * Give localized information about 1 task
+    * Give localized information about a task
     *
     * @param $name of the task
     *

@@ -250,6 +250,7 @@ class PluginMreportingCriterias extends CommonDBTM {
       echo "<input type='hidden' name='notification_id' value='".$notification_id."'>";
 
       //saveCriterias ->
+      //Note : can use a GLPI function
       echo "<input type='submit' class='submit' name='saveCriterias' value='". _sx('button', 'Post') ."'>";
 
       Html::closeForm();
