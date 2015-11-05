@@ -3,8 +3,8 @@ include ("../../../inc/includes.php");
 
 Session::checkRight("notification", READ);
 
-Html::header(PluginMreportingNotification::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 
-	"config", "notification", "notification");
+$title = PluginMreportingNotification::getTypeName(Session::getPluralNumber());
+Html::header($title, $_SERVER["PHP_SELF"], "plugins", "pluginmreportingmenu", "notification");
 
 Search::show('PluginMreportingNotification');
 
