@@ -121,6 +121,9 @@ function plugin_mreporting_install() {
    require_once "inc/notificationtarget.class.php";
    PluginMreportingNotificationTarget::install($migration);
 
+   require_once "inc/criterias.class.php";
+   PluginMreportingCriterias::install($migration);
+
    //== Create directories
    $rep_files_mreporting = GLPI_PLUGIN_DOC_DIR."/mreporting";
    if (!is_dir($rep_files_mreporting))
@@ -178,6 +181,9 @@ function plugin_mreporting_uninstall() {
    // 0.90+1.2
    require_once "inc/notificationtarget.class.php";
    PluginMreportingNotificationTarget::uninstall($migration);
+
+   require_once "inc/criterias.class.php";
+   PluginMreportingCriterias::uninstall($migration);
 
    return true;
 }

@@ -19,12 +19,13 @@ class PluginMreportingCriterias extends CommonDBTM {
       $table = self::getTable();
 
 		$query = "CREATE TABLE `$table` (
-						`id` INT(11) NOT NULL AUTO_INCREMENT,
-						`selectors` VARCHAR(255) NOT NULL DEFAULT '',
-						PRIMARY KEY (`id`)
-					)
-					COLLATE='latin1_swedish_ci'
-					ENGINE=InnoDB";
+                  `id` INT(11) NOT NULL AUTO_INCREMENT,
+                  `notification_id` INT(11) NOT NULL DEFAULT '0',
+                  `selectors` TEXT NOT NULL,
+                  PRIMARY KEY (`id`)
+               )
+               COLLATE='latin1_swedish_ci'
+               ENGINE=InnoDB";
 		$DB->query($query);
 	}
 
