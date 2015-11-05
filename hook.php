@@ -157,7 +157,6 @@ function plugin_mreporting_uninstall() {
 
    $tables = array("glpi_plugin_mreporting_profiles",
                    "glpi_plugin_mreporting_preferences",
-                   "glpi_plugin_mreporting_notifications",
    );
 
    foreach ($tables as $table) {

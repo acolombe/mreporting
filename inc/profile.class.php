@@ -92,7 +92,9 @@ class PluginMreportingProfile extends CommonDBTM {
    function getFromDBByProfile($profiles_id) {
       global $DB;
 
-      $query = "SELECT * FROM `{$this->getTable()}`
+      $table = $this->getTable();
+
+      $query = "SELECT * FROM `$table`
          WHERE `profiles_id` = '".$profiles_id."'";
       if ($result = $DB->query($query)) {
          if ($DB->numrows($result) != 1) {

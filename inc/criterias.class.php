@@ -16,7 +16,9 @@ class PluginMreportingCriterias extends CommonDBTM {
 	static function install(Migration $migration) {
 		global $DB;
 
-		$query = "CREATE TABLE `{$this->getTable()}` (
+      $table = self::getTable();
+
+		$query = "CREATE TABLE `$table` (
 						`id` INT(11) NOT NULL AUTO_INCREMENT,
 						`selectors` VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (`id`)
@@ -27,7 +29,7 @@ class PluginMreportingCriterias extends CommonDBTM {
 	}
 
 	static function uninstall(Migration $migration) {
-		$migration->dropTable(getTableForItemType(__CLASS__));
+		$migration->dropTable(self::getTable());
 	}
 
    /*

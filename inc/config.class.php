@@ -51,7 +51,9 @@ class PluginMreportingConfig extends CommonDBTM {
    static function install(Migration $migration) {
       global $DB;
       
-      $query = "CREATE TABLE IF NOT EXISTS `{$this->getTable()}` (
+      $table = self::getTable();
+
+      $query = "CREATE TABLE IF NOT EXISTS `$table` (
       `id` int(11) NOT NULL auto_increment,
       `name` varchar(255) collate utf8_unicode_ci default NULL,
       `classname` varchar(255) collate utf8_unicode_ci default NULL,
@@ -82,7 +84,7 @@ class PluginMreportingConfig extends CommonDBTM {
    }
 
    static function uninstall(Migration $migration) {
-      $migration->dropTable($this->getTable());
+      $migration->dropTable(self::getTable());
 
       foreach(array("DisplayPreference", "Bookmark") as $object) {
          $obj = new $object();

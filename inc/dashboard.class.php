@@ -32,7 +32,9 @@ class PluginMreportingDashboard extends CommonDBTM {
    static function install(Migration $migration) {
       global $DB;
 
-      $query = "CREATE TABLE IF NOT EXISTS `{$this->getTable()}` (
+      $table = self::getTable();
+
+      $query = "CREATE TABLE IF NOT EXISTS `$table` (
                   `id` int(11) NOT NULL auto_increment,
                   `users_id` int(11) NOT NULL,
                   `reports_id`int(11) NOT NULL,
@@ -43,7 +45,7 @@ class PluginMreportingDashboard extends CommonDBTM {
    }
 
    static function uninstall(Migration $migration) {
-      $migration->dropTable($this->getTable());
+      $migration->dropTable(self::getTable());
    }
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {

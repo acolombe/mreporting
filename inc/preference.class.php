@@ -120,7 +120,9 @@ class PluginMreportingPreference extends CommonDBTM {
          }
          $selector = addslashes(json_encode($values));
 
-         $query = "UPDATE `{$this->getTable()}`
+         $table = self::getTable();
+
+         $query = "UPDATE `$table`
                    SET `selectors`='$selector'
                    WHERE `users_id`='$users_id'";
          $DB->query($query);

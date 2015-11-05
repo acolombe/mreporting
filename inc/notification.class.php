@@ -145,7 +145,9 @@ class PluginMreportingNotification extends Notification {
               VALUES (1, 1, ' . $notification_id . ');');
       }
 
-      $query = "CREATE TABLE `{$this->getTable()}` (
+      $table = self::getTable();
+
+      $query = "CREATE TABLE `$table` (
                   `id` INT(11) NOT NULL AUTO_INCREMENT,
                   `name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
                   `entities_id` INT(11) NOT NULL DEFAULT '0',
@@ -174,8 +176,8 @@ class PluginMreportingNotification extends Notification {
       // == UPDATE TO 0.90+1.2
 
       // This new field is for save a report id
-      $migration->addField($this->getTable(), 'report', "INT(11) NULL DEFAULT '0'");
-      $migration->migrationOneTable($this->getTable());
+      $migration->addField(self::getTable(), 'report', "INT(11) NULL DEFAULT '0'");
+      $migration->migrationOneTable(self::getTable());
 
    }
 
@@ -212,7 +214,7 @@ class PluginMreportingNotification extends Notification {
          $DB->query($query);
       }
 
-      return array('success' => true);
+      $migration->dropTable('glpi_plugin_mreporting_notifications');
    }
 
    /**

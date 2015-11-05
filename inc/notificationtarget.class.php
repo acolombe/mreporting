@@ -23,8 +23,10 @@ class PluginMreportingNotificationTarget extends NotificationTarget {
 	static function install(Migration $migration) {
 		global $DB;
 
+    $table = self::getTable();
+
 		//From glpi_notificationtargets
-		$query = "CREATE TABLE `{$this->getTable()}` (
+		$query = "CREATE TABLE `$table` (
 						`id` INT(11) NOT NULL AUTO_INCREMENT,
 						`items_id` INT(11) NOT NULL DEFAULT '0',
 						`type` INT(11) NOT NULL DEFAULT '0',
@@ -39,7 +41,7 @@ class PluginMreportingNotificationTarget extends NotificationTarget {
 	}
 
 	static function uninstall(Migration $migration) {
-		$migration->dropTable(getTableForItemType(__CLASS__));
+	   $migration->dropTable(self::getTable());
 	}
 
 	/**
