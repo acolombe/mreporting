@@ -29,6 +29,10 @@
 
 class PluginMreportingDashboard extends CommonDBTM {
 
+   static function getTypeName($nb = 0) {
+      return __("Dashboard", 'mreporting');
+   }
+
    static function install(Migration $migration) {
       global $DB;
 
@@ -49,11 +53,12 @@ class PluginMreportingDashboard extends CommonDBTM {
    }
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
+      //For GLPI home page
       if (get_class($item) == 'Central' 
          && PluginMreportingCommon::canAccessAtLeastOneReport($_SESSION['glpiactiveprofile']['id'])) {
-         return array(1 => __("Dashboard", 'mreporting'));
+         return array($this->getTypeName());
       }
-      return '';
+      return array();
    }
 
 

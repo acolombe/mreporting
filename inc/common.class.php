@@ -55,8 +55,8 @@ class PluginMreportingCommon extends CommonDBTM {
       global $CFG_GLPI;
 
       $img_db = "<img src='".$CFG_GLPI["root_doc"]."/plugins/mreporting/pics/dashboard.png'
-                           title='".__("Dashboard", 'mreporting')."' 
-                           alt='".__("Dashboard", 'mreporting')."'>";
+                           title='".PluginMreportingDashboard::getTypeName()."' 
+                           alt='".PluginMreportingDashboard::getTypeName()."'>";
       $img_ct   = "<img src='".$CFG_GLPI["root_doc"]."/plugins/mreporting/pics/list_dashboard.png'
                            title='".__("Reports list", 'mreporting')."' 
                            alt='".__("Reports list", 'mreporting')."'>";
@@ -68,7 +68,7 @@ class PluginMreportingCommon extends CommonDBTM {
       $menu['page'] = PluginMreportingDashboard::CurrentUserHaveDashboard() ? $url_dashboard : $url_central;
 
       $menu['options']['dashboard']['page']            = $url_dashboard;
-      $menu['options']['dashboard']['title']           = __("Dashboard", 'mreporting');
+      $menu['options']['dashboard']['title']           = PluginMreportingDashboard::getTypeName();
       $menu['options']['dashboard']['links'][$img_db]  = $url_dashboard;
       $menu['options']['dashboard']['links'][$img_ct]  = $url_central;
       if (PluginMreportingConfig::canCreate()) {
