@@ -1,7 +1,7 @@
 <?php
 include ("../../../inc/includes.php");
 
-//Session::checkRight("notification", READ);
+Session::checkRight("notification", READ);
 
 Html::header(PluginMreportingNotification::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], 
 	"config", "notification", "notification");

@@ -1,15 +1,15 @@
 <?php
 include ("../../../inc/includes.php");
 
-//Session::checkLoginUser();
+Session::checkLoginUser();
 
-//Session::checkRight("notification", READ);
+Session::checkRight("notification", READ);
 
 if (!isset($_GET["id"])) {
    $_GET["id"] = "";
 }
 
-$notification = new PluginMreportingNotification(); //CHANGEMENT
+$notification = new PluginMreportingNotification();
 if (isset($_POST["add"])) {
    $notification->check(-1, CREATE,$_POST);
 
