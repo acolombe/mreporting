@@ -47,41 +47,22 @@ function plugin_mreporting_install() {
       )
       ENGINE = MyISAM;";
 
-   //create configuration table
-   $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_configs` (
-   `id` int(11) NOT NULL auto_increment,
-   `name` varchar(255) collate utf8_unicode_ci default NULL,
-   `classname` varchar(255) collate utf8_unicode_ci default NULL,
-   `is_active` tinyint(1) NOT NULL default '0',
-   `show_graph` tinyint(1) NOT NULL default '0',
-   `show_area` tinyint(1) NOT NULL default '0',
-   `spline` tinyint(1) NOT NULL default '0',
-   `show_label` VARCHAR(10) default NULL,
-   `flip_data` tinyint(1) NOT NULL default '0',
-   `unit` VARCHAR(10) default NULL,
-   `default_delay` VARCHAR(10) default NULL,
-   `condition` VARCHAR(255) default NULL,
-   `graphtype` VARCHAR(255) default 'GLPI',
-   PRIMARY KEY  (`id`),
-   KEY `is_active` (`is_active`)
-   ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
-
-
-   //create configuration table
    $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_dashboards` (
    `id` int(11) NOT NULL auto_increment,
    `users_id` int(11) NOT NULL,
    `reports_id`int(11) NOT NULL,
    `configuration` VARCHAR(500) default NULL,
-   PRIMARY KEY  (`id`)
+   PRIMARY KEY (`id`)
    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
+   require_once "inc/config.class.php";
+   PluginMreportingConfig::install($migration);
 
    $queries[] = "CREATE TABLE  IF NOT EXISTS `glpi_plugin_mreporting_preferences` (
    `id` int(11) NOT NULL auto_increment,
    `users_id` int(11) NOT NULL default 0,
    `template` varchar(255) collate utf8_unicode_ci default NULL,
-   PRIMARY KEY  (`id`),
+   PRIMARY KEY (`id`),
    KEY `users_id` (`users_id`)
    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
@@ -110,11 +91,6 @@ function plugin_mreporting_install() {
    foreach ($queries as $query) {
       $DB->query($query);
    }
-
-   // == Update to 2.1 ==
-   $migration->addField('glpi_plugin_mreporting_configs', 'is_notified',
-                        'tinyint(1) NOT NULL default "1"', array('after' => 'is_active'));
-   $migration->migrationOneTable('glpi_plugin_mreporting_configs');
 
    // == Update to 2.3 ==
    if (!fieldExists('glpi_plugin_mreporting_profiles', 'right')
@@ -148,10 +124,6 @@ function plugin_mreporting_install() {
 
    // == UPDATE TO 0.90+1.2
 
-   // In 0.90+1.2, this field is "moved" to field 'is_active' in glpi_plugin_mreporting_notifications
-   $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
-   $migration->migrationOneTable('glpi_plugin_mreporting_configs');
-
    require_once "inc/notificationtarget.class.php";
    PluginMreportingNotificationTarget::install($migration);
 
@@ -174,7 +146,6 @@ function plugin_mreporting_install() {
    // == Init available reports
    require_once "inc/baseclass.class.php";
    require_once "inc/common.class.php";
-   require_once "inc/config.class.php";
    $config = new PluginMreportingConfig();
    $config->createFirstConfig();
 
@@ -191,25 +162,20 @@ function plugin_mreporting_uninstall() {
    $migration = new Migration($version['version']);
 
    $tables = array("glpi_plugin_mreporting_profiles",
-                   "glpi_plugin_mreporting_configs",
                    "glpi_plugin_mreporting_preferences",
                    "glpi_plugin_mreporting_notifications",
                    "glpi_plugin_mreporting_dashboards"
    );
 
-   foreach($tables as $table) {
+   foreach ($tables as $table) {
       $migration->dropTable($table);
    }
 
    Toolbox::deleteDir(GLPI_PLUGIN_DOC_DIR."/mreporting/notifications");
    Toolbox::deleteDir(GLPI_PLUGIN_DOC_DIR."/mreporting");
 
-   $objects = array("DisplayPreference", "Bookmark");
-
-   foreach($objects as $object) {
-      $obj = new $object();
-      $obj->deleteByCriteria(array('itemtype' => 'PluginMreportingConfig'));
-   }
+   require_once "inc/config.class.php";
+   PluginMreportingConfig::uninstall($migration);
 
    require_once "inc/notification.class.php";
    PluginMreportingNotification::uninstall($migration);

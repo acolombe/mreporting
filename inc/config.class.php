@@ -48,6 +48,47 @@ class PluginMreportingConfig extends CommonDBTM {
      return $ong;
    }
 
+   static function install(Migration $migration) {
+      global $DB;
+      
+      $query = "CREATE TABLE IF NOT EXISTS `{$this->getTable()}` (
+      `id` int(11) NOT NULL auto_increment,
+      `name` varchar(255) collate utf8_unicode_ci default NULL,
+      `classname` varchar(255) collate utf8_unicode_ci default NULL,
+      `is_active` tinyint(1) NOT NULL default '0',
+      `show_graph` tinyint(1) NOT NULL default '0',
+      `show_area` tinyint(1) NOT NULL default '0',
+      `spline` tinyint(1) NOT NULL default '0',
+      `show_label` VARCHAR(10) default NULL,
+      `flip_data` tinyint(1) NOT NULL default '0',
+      `unit` VARCHAR(10) default NULL,
+      `default_delay` VARCHAR(10) default NULL,
+      `condition` VARCHAR(255) default NULL,
+      `graphtype` VARCHAR(255) default 'GLPI',
+      PRIMARY KEY (`id`),
+      KEY `is_active` (`is_active`)
+      ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+      $DB->query($query);
+
+      // == Update to 2.1 ==
+      $migration->addField('glpi_plugin_mreporting_configs', 'is_notified',
+                           'tinyint(1) NOT NULL default "1"', array('after' => 'is_active'));
+      $migration->migrationOneTable('glpi_plugin_mreporting_configs');
+
+      // In 0.90+1.2, this field is "moved" to field 'is_active' in glpi_plugin_mreporting_notifications
+      $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
+      $migration->migrationOneTable('glpi_plugin_mreporting_configs');
+
+   }
+
+   static function uninstall(Migration $migration) {
+      $migration->dropTable($this->getTable());
+
+      foreach(array("DisplayPreference", "Bookmark") as $object) {
+         $obj = new $object();
+         $obj->deleteByCriteria(array('itemtype' => 'PluginMreportingConfig'));
+      }
+   }
 
    function getSearchOptions() {
       $tab = array();
