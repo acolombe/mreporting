@@ -54,6 +54,8 @@ class PluginMreportingCommon extends CommonDBTM {
    static function getMenuContent() {
       global $CFG_GLPI;
 
+      $menu = parent::getMenuContent();
+
       $img_db = "<img src='".$CFG_GLPI["root_doc"]."/plugins/mreporting/pics/dashboard.png'
                            title='".PluginMreportingDashboard::getTypeName()."' 
                            alt='".PluginMreportingDashboard::getTypeName()."'>";
@@ -62,8 +64,6 @@ class PluginMreportingCommon extends CommonDBTM {
                            alt='".__("Reports list", 'mreporting')."'>";
       $url_central   = "/plugins/mreporting/front/central.php";
       $url_dashboard = "/plugins/mreporting/front/dashboard.php";
-
-      $menu = parent::getMenuContent();
 
       $menu['page'] = PluginMreportingDashboard::CurrentUserHaveDashboard() ? $url_dashboard : $url_central;
 
@@ -383,7 +383,7 @@ class PluginMreportingCommon extends CommonDBTM {
             
             echo "<div class='f_right'>";
             echo __("Export")." : ";
-            echo "<a href='#' onClick=\"var w = window.open('popup.php?classname=$classname' ,'glpipopup', ".
+            echo "<a href='#' style='color:#3A5693;' onClick=\"var w = window.open('popup.php?classname=$classname' ,'glpipopup', ".
                   "'height=$height, width=1000, top=100, left=100, scrollbars=yes'); w.focus();\">";
             echo "ODT</a>";
             echo "</div>";
