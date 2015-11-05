@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: GLPI - Mreporting plugin 1.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-04 13:44+0100\n"
+"PO-Revision-Date: 2015-11-05 11:32+0100\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -252,6 +252,9 @@ msgstr ""
 
 msgid "No configuration for this report"
 msgstr "No configuration for this report"
+
+msgid "Dashboard is empty. Please add reports by clicking on the icon"
+msgstr "Dashboard is empty. Please add reports by clicking on the icon"
 
 # For reportHbarComputersByAge()
 msgid "< 1 year"

@@ -242,6 +242,9 @@ msgstr ""
 msgid "No configuration for this report"
 msgstr ""
 
+msgid "Dashboard is empty. Please add reports by clicking on the icon"
+msgstr ""
+
 # For reportHbarComputersByAge()
 msgid "< 1 year"
 msgstr ""
