@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GLPI Project - Plugin MReporting\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-05 11:33+0100\n"
+"PO-Revision-Date: 2015-11-05 12:02+0100\n"
 "Last-Translator: Jérémy MOREAU <jmoreau.dev@gmail.com>\n"
 "Language-Team: French (France) (http://www.transifex.com/teclib/glpi-project-plugin-mreporting/language/fr_FR/)\n"
 "MIME-Version: 1.0\n"
@@ -78,7 +78,7 @@ msgstr "Données"
 
 #: inc/common.class.php:1122
 msgid "No graphic selected"
-msgstr "aucun graphique sélectionné"
+msgstr "Aucun graphique sélectionné"
 
 #: inc/config.class.php:70 inc/config.class.php:607
 msgid "See area"
