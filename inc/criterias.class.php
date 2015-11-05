@@ -101,7 +101,7 @@ class PluginMreportingCriterias extends CommonDBTM {
                      'selectors'       => addslashes(json_encode($selectors)));
 
       $criteria = new self();
-      if ($criteria->getFromDBByQuery(" WHERE notification_id = '$notification_id")) {
+      if ($criteria->getFromDBByQuery(" WHERE notification_id = $notification_id")) {
          $input['id'] = $criteria->getID();
          $criteria->update($input);
       } else {
