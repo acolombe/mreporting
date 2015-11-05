@@ -66,8 +66,8 @@ function plugin_mreporting_install() {
    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
 
-    //create configuration table
-    $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_dashboards` (
+   //create configuration table
+   $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_dashboards` (
    `id` int(11) NOT NULL auto_increment,
    `users_id` int(11) NOT NULL,
    `reports_id`int(11) NOT NULL,
@@ -88,7 +88,9 @@ function plugin_mreporting_install() {
    $query_display_pref = "SELECT id
       FROM glpi_displaypreferences
       WHERE itemtype = 'PluginMreportingConfig'";
+
    $res_display_pref = $DB->query($query_display_pref);
+
    if ($DB->numrows($res_display_pref) == 0) {
       $queries[] = "INSERT INTO `glpi_displaypreferences`
          VALUES (NULL,'PluginMreportingConfig','2','2','0');";
@@ -166,7 +168,7 @@ function plugin_mreporting_install() {
    $migration->migrationOneTable('glpi_plugin_mreporting_configs');
 
    // This new field is for save a report id
-   $migration->addField('glpi_plugin_mreporting_notifications', 'report');
+   $migration->addField('glpi_plugin_mreporting_notifications', 'report', "INT(11) NULL DEFAULT '0'");
    $migration->migrationOneTable('glpi_plugin_mreporting_notifications');
 
    require_once "inc/target.class.php";
@@ -209,7 +211,6 @@ function plugin_mreporting_install() {
 
 function plugin_mreporting_uninstall() {
    global $DB;
-
 
    $migration = new Migration("2.3.0");
    $tables = array("glpi_plugin_mreporting_profiles",
