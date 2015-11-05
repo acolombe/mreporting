@@ -212,6 +212,7 @@ function plugin_mreporting_giveItem($type,$ID,$data,$num) {
 
    switch ($type) {
 
+      case 'PluginMreportingNotification':
       case 'PluginMreportingConfig':
 
          switch ($table.'.'.$field) {
