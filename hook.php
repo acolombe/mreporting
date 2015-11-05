@@ -35,8 +35,9 @@ function plugin_mreporting_install() {
 
    include_once(GLPI_ROOT."/plugins/mreporting/inc/profile.class.php");
 
-   //create profiles table
    $queries = array();
+
+   //create profiles table
    $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_profiles` (
       `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
       `profiles_id` VARCHAR(45) NOT NULL,
@@ -46,8 +47,8 @@ function plugin_mreporting_install() {
       )
       ENGINE = MyISAM;";
 
-    //create configuration table
-    $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_configs` (
+   //create configuration table
+   $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_configs` (
    `id` int(11) NOT NULL auto_increment,
    `name` varchar(255) collate utf8_unicode_ci default NULL,
    `classname` varchar(255) collate utf8_unicode_ci default NULL,
@@ -63,7 +64,7 @@ function plugin_mreporting_install() {
    `graphtype` VARCHAR(255) default 'GLPI',
    PRIMARY KEY  (`id`),
    KEY `is_active` (`is_active`)
-   ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+   ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
 
    //create configuration table
@@ -73,7 +74,7 @@ function plugin_mreporting_install() {
    `reports_id`int(11) NOT NULL,
    `configuration` VARCHAR(500) default NULL,
    PRIMARY KEY  (`id`)
-   ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+   ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
 
    $queries[] = "CREATE TABLE  IF NOT EXISTS `glpi_plugin_mreporting_preferences` (
@@ -82,7 +83,7 @@ function plugin_mreporting_install() {
    `template` varchar(255) collate utf8_unicode_ci default NULL,
    PRIMARY KEY  (`id`),
    KEY `users_id` (`users_id`)
-   ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+   ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
    // add display preferences
    $query_display_pref = "SELECT id
@@ -106,23 +107,7 @@ function plugin_mreporting_install() {
          VALUES (NULL,'PluginMreportingConfig','8','8','0');";
    }
 
-   //Existed before 0.90+1.2, but used in 0.90+1.2
-   $queries[] = "CREATE TABLE IF NOT EXISTS `glpi_plugin_mreporting_notifications` (
-      `id` int(11) NOT NULL auto_increment,
-      `entities_id` int(11) NOT NULL default '0',
-      `is_recursive` tinyint(1) NOT NULL default '0',
-      `name` varchar(255) collate utf8_unicode_ci default NULL,
-      `notepad` longtext collate utf8_unicode_ci,
-      `date_envoie` DATE DEFAULT NULL,
-      `notice`INT(11) NOT NULL DEFAULT 0,
-      `alert` INT(11) NOT NULL DEFAULT 0,
-      `comment` text collate utf8_unicode_ci,
-      `date_mod` datetime default NULL,
-      `is_deleted` tinyint(1) NOT NULL default '0',
-      PRIMARY KEY (`id`)
-      ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
-
-   foreach($queries as $query) {
+   foreach ($queries as $query) {
       $DB->query($query);
    }
 
@@ -167,18 +152,8 @@ function plugin_mreporting_install() {
    $migration->dropField('glpi_plugin_mreporting_configs', 'is_notified');
    $migration->migrationOneTable('glpi_plugin_mreporting_configs');
 
-   // This new field is for save a report id
-   $migration->addField('glpi_plugin_mreporting_notifications', 'report', "INT(11) NULL DEFAULT '0'");
-   $migration->migrationOneTable('glpi_plugin_mreporting_notifications');
-
    require_once "inc/target.class.php";
    PluginMreportingNotificationTarget::install($migration);
-
-   // Delete old table for create with other fields
-   $migration->dropTable("glpi_plugin_mreporting_notifications");
-   
-   require_once "inc/notification.class.php";
-   PluginMreportingNotification::install($migration);
 
    //== Create directories
    $rep_files_mreporting = GLPI_PLUGIN_DOC_DIR."/mreporting";

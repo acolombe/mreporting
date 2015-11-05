@@ -145,7 +145,6 @@ class PluginMreportingNotification extends Notification {
               VALUES (1, 1, ' . $notification_id . ');');
       }
 
-      //From Notification
       $query = "CREATE TABLE `{$this->getTable()}` (
                   `id` INT(11) NOT NULL AUTO_INCREMENT,
                   `name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
@@ -169,10 +168,15 @@ class PluginMreportingNotification extends Notification {
                )
                COLLATE='utf8_unicode_ci'
                ENGINE=MyISAM";
+
       $DB->query($query);
 
-      //useless
-      return array('success' => true);
+      // == UPDATE TO 0.90+1.2
+
+      // This new field is for save a report id
+      $migration->addField($this->getTable(), 'report', "INT(11) NULL DEFAULT '0'");
+      $migration->migrationOneTable($this->getTable());
+
    }
 
    /**
