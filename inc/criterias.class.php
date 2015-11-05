@@ -294,8 +294,7 @@ class PluginMreportingCriterias extends CommonDBTM {
       if (Notification::canView() && $item->getType() == 'PluginMreportingNotification') { //"Security"
 
          if ($_SESSION['glpishow_count_on_tabs']) {
-         	//Note : can remplace '2' by Session::
-         	return self::createTabEntry(self::getTypeName(2));
+         	return self::createTabEntry(self::getTypeName(Session::getPluralNumber()));
 
          	//Note : Possible to have best code ?
             //return self::createTabEntry(self::getTypeName(Session::getPluralNumber()),
