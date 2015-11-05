@@ -4,13 +4,7 @@ class PluginMreportingNotification extends Notification {
 
    public $dohistory = true;
 
-   /**
-    * Return the localized name of the current Type (PluginMreporting)
-    *
-    * @see CommonGLPI::getTypeName()
-    * @param string $nb
-    * @return string name of the plugin
-    */
+   //used
    static function getTypeName($nb = 0) {
       return __("More Reporting", 'mreporting');
    }
@@ -49,15 +43,9 @@ class PluginMreportingNotification extends Notification {
 
       echo "<tr class='tab_bg_1'><td>" . __('Type') . "</td>";
       echo "<td>";
-      if (!Session::haveRight(static::$rightname, UPDATE)) {
-         $itemtype = $this->fields['itemtype'];
-         echo $itemtype::getTypeName(1);
-         $rand ='';
-      } else {
-         $rand = Dropdown::showItemTypes('itemtype',
-                                         array("PluginMreportingNotification"), //Only PluginMreportingNotification
-                                         array('value' => $this->fields['itemtype']));
-      }
+      $rand = Dropdown::showItemTypes('itemtype',
+                                      array("PluginMreportingNotification"), //Only PluginMreportingNotification
+                                      array('value' => $this->fields['itemtype']));
 
       $params = array('itemtype' => '__VALUE__');
       Ajax::updateItemOnSelectEvent("dropdown_itemtype$rand", "show_events",
