@@ -303,6 +303,11 @@ class PluginMreportingProfile extends CommonDBTM {
          echo "<tr class='tab_bg_1'>";
          echo "<td>".$prof->getLink()."</td>";
          echo "<td>";
+         //Quick fix
+         if (!isset($reportProfiles->fields['right'])) {
+            $reportProfiles->fields['right'] = 0;
+         }
+
          Profile::dropdownNoneReadWrite($profile['id'], 
                                         $reportProfiles->fields['right'], 1, 1, 0);
          echo "</td></tr>";
