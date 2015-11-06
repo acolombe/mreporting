@@ -203,6 +203,31 @@ class PluginMreportingCriterias extends CommonDBTM {
       return ob_get_clean();
    }
 
+   /**
+     * Load $_SESSION['mreporting_selector'][$graphname] without dateinterval
+     **/
+   static function loadSessionMreportingSelector($graphname, $classname) {
+
+      $config = PluginMreportingConfig::initConfigParams($graphname, $classname);
+
+      $obj = new $classname($config);
+      $obj->$graphname($config);
+
+      //Note : can remove only begin date or end date selector because selector is 'dateinterval'
+
+      //Remove begin date selector and end date selector
+      if (in_array('dateinterval', $_SESSION['mreporting_selector'][$graphname])) {
+         $key = array_search('dateinterval', $_SESSION['mreporting_selector'][$graphname]);
+         unset ($_SESSION['mreporting_selector'][$graphname][$key]);
+
+         if (empty($_SESSION['mreporting_selector'][$graphname])) {
+            echo __("Setting the start date and the end date is in the configuration of the report.", 'mreporting');
+            echo "<br><br>";
+         }
+      }
+
+   }
+
    //Adapted from getConfig() in dashboard class
    static function showFormCriteriasFilters($notification_id) {
       
@@ -220,13 +245,8 @@ class PluginMreportingCriterias extends CommonDBTM {
 
       // == Display filters ==
 
-      $graphname = $_REQUEST['f_name'];
-
-      //TODO : Need to use real values
-      $_SESSION['mreporting_selector'][$graphname] =
-         array('dateinterval', 'period', 'backlogstates', 'multiplegrouprequest',
-               'userassign', 'category', 'multiplegroupassign');
-
+      //Note : No need to make a save of mreporting_selector session
+      self::loadSessionMreportingSelector($_REQUEST['f_name'], 'PluginMreporting'.$_REQUEST['short_classname']);
 
       $reportSelectors = self::getReportSelectors();
 

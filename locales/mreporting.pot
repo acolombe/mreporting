@@ -253,6 +253,9 @@ msgstr[1] ""
 msgid "Report"
 msgstr ""
 
+msgid "Setting the start date and the end date is in the configuration of the report."
+msgstr ""
+
 # For reportHbarComputersByAge()
 msgid "< 1 year"
 msgstr ""

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GLPI Project - Plugin MReporting\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-06 10:00+0100\n"
+"PO-Revision-Date: 2015-11-06 11:54+0100\n"
 "Last-Translator: Jérémy MOREAU <jmoreau.dev@gmail.com>\n"
 "Language-Team: French (France) (http://www.transifex.com/teclib/glpi-project-plugin-mreporting/language/fr_FR/)\n"
 "MIME-Version: 1.0\n"
@@ -266,6 +266,9 @@ msgstr[1] "Notifications Plus de rapports"
 
 msgid "Report"
 msgstr "Rapport"
+
+msgid "Setting the start date and the end date is in the configuration of the report."
+msgstr "Le paramétrage de la date de début et la date de fin se fait dans la configuration du rapport."
 
 # For reportHbarComputersByAge()
 msgid "< 1 year"
