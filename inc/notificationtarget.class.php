@@ -122,7 +122,7 @@ class PluginMreportingNotificationTarget extends NotificationTarget {
       $action = "";
 
       //$target = self::getInstanceByType($input['itemtype']);
-      $target = new PluginMreportingNotificationTarget();
+      $target = new self();
 
       if (!isset($input['notifications_id'])) {
          return;

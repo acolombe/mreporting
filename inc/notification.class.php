@@ -208,6 +208,32 @@ class PluginMreportingNotification extends Notification {
    }
 
    /**
+    * @param $event
+    * @param $itemtype
+    * @param $entity
+   **/
+   static function getNotificationsByEventAndType($event, $itemtype, $entity) {
+      global $DB;
+
+      $entity_where = getEntitiesRestrictRequest("AND", "glpi_plugin_mreporting_notifications", 'entities_id',
+                                                 $entity, true);
+
+      $query = "SELECT `glpi_plugin_mreporting_notifications`.*
+               FROM `glpi_plugin_mreporting_notifications`
+               LEFT JOIN `glpi_entities`
+                  ON (`glpi_entities`.`id` = `glpi_plugin_mreporting_notifications`.`entities_id`)
+               WHERE `glpi_plugin_mreporting_notifications`.`itemtype` = '$itemtype' 
+                  AND `glpi_plugin_mreporting_notifications`.`event` = '$event' 
+                  $entity_where
+                  AND `glpi_plugin_mreporting_notifications`.report > 0 
+                  AND `glpi_plugin_mreporting_notifications`.notificationtemplates_id != 0
+                  AND `glpi_plugin_mreporting_notifications`.`is_active`='1'
+                ORDER BY `glpi_entities`.`level` DESC";
+
+      return $DB->request($query);
+   }
+
+   /**
     * Give localized information about a task
     *
     * @param $name of the task

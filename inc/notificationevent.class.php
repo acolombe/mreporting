@@ -26,7 +26,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
          $email_notprocessed = array();
 
          $options['entities_id'] = 0;
-         $notificationtarget = NotificationTarget::getInstance($item, $event, $options);
+         $notificationtarget = PluginMreportingNotificationTarget::getInstance($item, $event, $options);
          if (!$notificationtarget) {
             return false;
          }
@@ -35,11 +35,18 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
          $template = new NotificationTemplate();
 
          $entity = $notificationtarget->getEntity();
-         //Foreach notification
-         foreach (Notification::getNotificationsByEventAndType($event, $item->getType(), $entity)
+
+         //if notification from GLPI core is not active
+         $notification_data = PluginMreportingNotification::getNotificationsByEventAndType($event, $item->getType(), $entity);
+         if (empty($notification_data)) {
+            return true;
+         }
+
+         //Foreach mreporting notification
+         foreach (PluginMreportingNotification::getNotificationsByEventAndType($event, $item->getType(), $entity)
                   as $data) {
-            $targets = getAllDatasFromTable('glpi_notificationtargets',
-                                            'notifications_id = '.$data['id']);
+            $targets = getAllDatasFromTable(getTableForItemType('PluginMreportingNotificationTarget'), 'notifications_id = '.$data['id']);
+
             $notificationtarget->clearAddressesList();
 
             //Process more infos (for example for tickets)
@@ -51,16 +58,17 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
             //Set notification's signature (the one which corresponds to the entity)
             $template->setSignature(Notification::getMailingSignature($entity));
 
-            $notify_me = Session::isCron() ? true : $_SESSION['glpinotification_to_myself'];
+            $can_notify_me = Session::isCron() ? true : $_SESSION['glpinotification_to_myself'];
 
-            //Foreach notification targets
+            //Foreach mreporting notification targets
             foreach ($targets as $target) {
+
                //Get all users affected by this notification
                $notificationtarget->getAddressesByTarget($target,$options);
 
                foreach ($notificationtarget->getTargets() as $user_email => $users_infos) {
                   if ($label
-                      || $notificationtarget->validateSendTo($event, $users_infos, $notify_me)) {
+                      || $notificationtarget->validateSendTo($event, $users_infos, $can_notify_me)) {
                      //If the user have not yet been notified
                      if (!isset($email_processed[$users_infos['language']][$users_infos['email']])) {
                         //If ther user's language is the same as the template's one
@@ -87,7 +95,6 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
                            }
                            $email_processed[$users_infos['language']][$users_infos['email']]
                                                                      = $users_infos;
-
                         } else {
                            $email_notprocessed[$users_infos['language']][$users_infos['email']]
                                                                         = $users_infos;
