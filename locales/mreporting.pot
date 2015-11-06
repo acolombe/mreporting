@@ -248,6 +248,9 @@ msgstr ""
 msgid "More reporting notifications"
 msgstr ""
 
+msgid "Report"
+msgstr ""
+
 # For reportHbarComputersByAge()
 msgid "< 1 year"
 msgstr ""

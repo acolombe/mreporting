@@ -78,11 +78,11 @@ class PluginMreportingNotification extends Notification {
 
       // Select report
       echo "<tr class='tab_bg_1'>";
-      //TODO : Change string
-      echo "<td>". __("Select a report to add", 'mreporting') ."</td>";
-      echo "<td><span id='show_reports'>";
+      echo "<td>". __("Report", 'mreporting') ."</td>";
+      echo "<td>";
       echo PluginMreportingCommon::getSelectAllReports(false, true, $this->fields['report']);
-      echo "</span></td></tr>";
+      echo "</td>";
+      echo "</tr>";
 
       $this->showFormButtons($options);
       return true;
