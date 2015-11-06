@@ -4,9 +4,8 @@ class PluginMreportingNotification extends Notification {
 
    public $dohistory = true;
 
-   //used
    static function getTypeName($nb = 0) {
-      return __("More Reporting", 'mreporting');
+      return _n("More reporting notification", "More reporting notifications", $nb, 'mreporting');
    }
 
    function defineTabs($options=array()) {

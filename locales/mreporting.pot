@@ -245,8 +245,10 @@ msgstr ""
 msgid "Dashboard is empty. Please add reports by clicking on the icon"
 msgstr ""
 
-msgid "More reporting notifications"
-msgstr ""
+msgid "More reporting notification"
+msgid_plural "More reporting notifications"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Report"
 msgstr ""
