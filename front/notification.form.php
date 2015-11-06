@@ -38,7 +38,7 @@ if (isset($_POST["add"])) {
 
 } else {
    $title = PluginMreportingNotification::getTypeName(Session::getPluralNumber());
-   Html::header($title, $_SERVER["PHP_SELF"], "plugins", "pluginmreportingmenu", "notification");
+   Html::header($title, '' ,'tools', 'PluginMreportingCommon', 'notification');
 
    $notification->display(array('id' => $_GET["id"]));
    Html::footer();

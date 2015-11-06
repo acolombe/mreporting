@@ -87,6 +87,14 @@ class PluginMreportingCommon extends CommonDBTM {
          $menu['options']['config']['links']['add']    = PluginMreportingConfig::getFormURL(false);
       }
 
+      $menu['options']['notification'] = array(
+           'title' => PluginMreportingNotification::getTypeName(Session::getPluralNumber()),
+           'page'  => PluginMreportingNotification::getSearchURL(false),
+           'links' => array(
+               'add' => PluginMreportingNotification::getFormURL(false), //No check now
+               'search' => PluginMreportingNotification::getSearchURL(false),
+           ));
+
       return $menu;
    }
 

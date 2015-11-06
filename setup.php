@@ -100,8 +100,6 @@ function plugin_init_mreporting() {
             = array('Profile'                => array('PluginMreportingProfile', 'addProfiles'),
                     'PluginMreportingConfig' => array('PluginMreportingProfile', 'addReport'));
 
-         $PLUGIN_HOOKS["menu_toadd"]['mreporting']['plugins'] = 'PluginMreportingMenu';
-
       }
 
 
