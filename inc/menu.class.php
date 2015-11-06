@@ -8,7 +8,7 @@ class PluginMreportingMenu extends CommonGLPI {
 
       $options['notification'] = array(
            'title' => 'Notification ' . PluginMreportingNotification::getTypeName(Session::getPluralNumber()), //Note : quick locale hack
-           'page'  => PluginFusioninventoryAgent::getSearchURL(false).'#125',
+           'page'  => PluginMreportingNotification::getSearchURL(false),
            'links' => array(
                'add' => PluginMreportingNotification::getFormURL(false), //No check now
                'search' => PluginMreportingNotification::getSearchURL(false),
