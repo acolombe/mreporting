@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GLPI Project - Plugin MReporting\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-05 12:02+0100\n"
+"PO-Revision-Date: 2015-11-06 09:40+0100\n"
 "Last-Translator: Jérémy MOREAU <jmoreau.dev@gmail.com>\n"
 "Language-Team: French (France) (http://www.transifex.com/teclib/glpi-project-plugin-mreporting/language/fr_FR/)\n"
 "MIME-Version: 1.0\n"
@@ -258,6 +258,9 @@ msgstr "Pas de configuration pour ce rapport"
 
 msgid "Dashboard is empty. Please add reports by clicking on the icon"
 msgstr "Le tableau de bord est vide. Ajouter des rapports en cliquant sur l'icône"
+
+msgid "More reporting notifications"
+msgstr "Notifications Plus de rapports"
 
 # For reportHbarComputersByAge()
 msgid "< 1 year"
