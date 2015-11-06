@@ -245,7 +245,7 @@ class PluginMreportingConfig extends CommonDBTM {
          $buttons["config.php?new=1"] = __("Initialize graphics configuration", 'mreporting');
       }
 
-      $buttons["front/notification.php"] = PluginMreportingNotification::getTypeName(Session::getPluralNumber());
+      $buttons["notification.php"] = PluginMreportingNotification::getTypeName(Session::getPluralNumber());
 
       $title = "";
       Html::displayTitle($CFG_GLPI["root_doc"] . "/plugins/mreporting/pics/config2.png",
