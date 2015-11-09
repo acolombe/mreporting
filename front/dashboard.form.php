@@ -9,7 +9,7 @@ Session::checkLoginUser();
 
 if (isset($_POST['saveConfig'])) {
 
-    PluginMreportingCommon::saveSelectors($_POST['f_name']);
+    PluginMreportingPreference::saveSelectors($_POST['f_name']);
 
     $_REQUEST['f_name'] = $_POST['f_name'];
     $_REQUEST['short_classname'] = $_POST['short_classname'];
@@ -20,9 +20,7 @@ if (isset($_POST['saveConfig'])) {
 
 } else if (isset($_REQUEST['_saveCriterias'])) {
 
-    // Save
-    $config = array('randname' => 'PluginMreporting'. $_REQUEST['short_classname'] . $_POST['f_name']);
-    PluginMreportingCriterias::saveSelectors($_POST['f_name'], $config);
+    PluginMreportingCriterias::saveSelectors($_POST['f_name'], $_REQUEST['notification_id']);
 
     Html::back();
 

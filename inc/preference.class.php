@@ -129,6 +129,53 @@ class PluginMreportingPreference extends CommonDBTM {
       }
    }
 
+   static function saveSelectors($graphname, $config = array()) {
+      $remove = array('short_classname', 'f_name', 'gtype', 'submit');
+      $values = array();
+
+      foreach ($_REQUEST as $key => $value) {
+         if (!preg_match("/^_/", $key) && !in_array($key, $remove) ) {
+            $values[$key] = $value;
+         }
+         if (empty($value)) {
+            unset($_REQUEST[$key]);
+         }
+      }
+
+      //clean unmodified date
+      if (isset($config['randname'])) {
+         if (isset($_REQUEST['date1'.$config['randname']])
+            && $_REQUEST['date1'.$config['randname']]
+               == $_SESSION['mreporting_values']['date1'.$config['randname']]) {
+            unset($_REQUEST['date1'.$config['randname']]);
+         }
+         if (isset($_REQUEST['date2'.$config['randname']])
+            && $_REQUEST['date2'.$config['randname']]
+               == $_SESSION['mreporting_values']['date2'.$config['randname']]) {
+            unset($_REQUEST['date2'.$config['randname']]);
+         }
+      }
+
+      if (!empty($values)) {
+         $pref = new PluginMreportingPreference();
+         $id = $pref->addDefaultPreference(Session::getLoginUserID());
+         $tmp['id'] = $id;
+
+         $pref->getFromDB($id);
+
+         if (!is_null($pref->fields['selectors'])) {
+            $selectors = $pref->fields['selectors'];
+            $sel = json_decode(stripslashes($selectors), true);
+            $sel[$graphname] = $values;
+         } else {
+            $sel = $values;
+         }
+         $tmp['selectors'] = addslashes(json_encode($sel));
+         $pref->update($tmp);
+      }
+      $_SESSION['mreporting_values'] = $values;
+   }
+
    function showForm($ID) {
       $this->getFromDB($ID);
 

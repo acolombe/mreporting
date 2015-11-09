@@ -33,10 +33,7 @@ class PluginMreportingCriterias extends CommonDBTM {
 		$migration->dropTable(self::getTable());
 	}
 
-   static function saveSelectors($graphname, $config = array()) {
-
-      //Saved notification_id
-      $notification_id = $_REQUEST['notification_id'];
+   static function saveSelectors($graphname, $notification_id) {
 
       $remove_fields = array('short_classname', 'f_name', 'notification_id');
 
