@@ -88,11 +88,7 @@ class PluginMreportingDashboard extends CommonDBTM {
 
       $root_ajax = $CFG_GLPI['root_doc']."/plugins/mreporting/ajax/dashboard.php";
 
-      if (isset($options['target'])) {
-         $target = $options['target'];
-      } else {
-         $target = $this->getFormURL();
-      }
+      $target = isset($options['target']) ? $options['target'] : $this->getFormURL();
 
       $_REQUEST['f_name'] = 'option';
       PluginMreportingCommon::getSelectorValuesByUser();

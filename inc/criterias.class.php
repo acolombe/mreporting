@@ -312,7 +312,7 @@ class PluginMreportingCriterias extends CommonDBTM {
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
 
-      if (Notification::canView() && $item->getType() == 'PluginMreportingNotification') { //"Security"
+      if ($item->getType() == 'PluginMreportingNotification' && Notification::canView()) { //"Security"
 
          if ($_SESSION['glpishow_count_on_tabs']) {
          	return self::createTabEntry(self::getTypeName(Session::getPluralNumber()));
