@@ -233,6 +233,15 @@ class PluginMreportingNotification extends Notification {
       return $DB->request($query);
    }
 
+   function getSearchOptions() {
+      $tab = parent::getSearchOptions();
+
+      //Fix a GLPI bug : Don't want to have 'contain' in search option is_active
+      $tab[6]['searchtype']      = array('equals', 'notequals');
+
+      return $tab;
+   }
+
    /**
     * Give localized information about a task
     *
