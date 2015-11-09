@@ -33,46 +33,12 @@ class PluginMreportingCriterias extends CommonDBTM {
 		$migration->dropTable(self::getTable());
 	}
 
-   /*
-   static function cleanUnmodifiedDate($config = array()) {
-      if (isset($config['randname'])) {
-         if (isset($_REQUEST['date1'.$config['randname']])
-            && $_REQUEST['date1'.$config['randname']]
-               == $_SESSION['mreporting_values']['date1'.$config['randname']]) {
-            unset($_REQUEST['date1'.$config['randname']]);
-         }
-         if (isset($_REQUEST['date2'.$config['randname']])
-            && $_REQUEST['date2'.$config['randname']]
-               == $_SESSION['mreporting_values']['date2'.$config['randname']]) {
-            unset($_REQUEST['date2'.$config['randname']]);
-         }
-      }
-   }
-   */
-
-   static function cleanBeginDate($config = array()) {
-      if (isset($config['randname']) && isset($_REQUEST['date1'.$config['randname']])) {
-         unset($_REQUEST['date1'.$config['randname']]);
-      }
-   }
-
-   static function cleanEndDate($config = array()) {
-      if (isset($config['randname']) && isset($_REQUEST['date2'.$config['randname']])) {
-         unset($_REQUEST['date2'.$config['randname']]);
-      }
-   }
-
    static function saveSelectors($graphname, $config = array()) {
 
+      //Saved notification_id
       $notification_id = $_REQUEST['notification_id'];
 
-      //TODO : add dates to this array (here ?)
-      $remove_fields = array('short_classname', 'f_name', 'gtype', 
-         'saveCriterias', '_glpi_csrf_token',
-         'notification_id',
-         '_date1'.$config['randname'], '_date2'.$config['randname'],
-         //'submit'
-      );
+      $remove_fields = array('short_classname', 'f_name', 'notification_id');
 
       $values = array();
 
@@ -87,17 +53,6 @@ class PluginMreportingCriterias extends CommonDBTM {
          }
       }
 
-      //TODO : Need to work on $values (only)
-
-      //clean unmodified date
-      //self::cleanUnmodifiedDate($config);
-
-      //clean begin date
-      self::cleanBeginDate($config);
-
-      //clean end date
-      self::cleanEndDate($config);
-
       $selectors = $values;
 
       $input = array('notification_id' => $notification_id,
@@ -110,7 +65,8 @@ class PluginMreportingCriterias extends CommonDBTM {
       } else {
          $criteria->add($input);
       }
-      //Note : Add that to locale plugin
+
+      //TODO : Add that to locale plugin
       Session::addMessageAfterRedirect(__('Saved', 'mreporting'), true);
 
       //$_SESSION['mreporting_values'] = $values;
@@ -237,10 +193,6 @@ class PluginMreportingCriterias extends CommonDBTM {
 
       // Rewrite mreporting_values session (temporary)
       $_SESSION['mreporting_values'] = self::getSelectorValuesByNotification_id($notification_id);
-      //var_dump($_SESSION['mreporting_values']);
-
-      //-> quasi vide mais permet d'obtenir 'reportGlineBacklogs' (nom du rapport)
-      //
 
       $reportSelectors = PluginMreportingCommon::getReportSelectors(true);
 
@@ -273,9 +225,9 @@ class PluginMreportingCriterias extends CommonDBTM {
       //echo "<input type='hidden' name='gtype' value='".$_REQUEST['gtype']."'>";
       echo "<input type='hidden' name='notification_id' value='".$notification_id."'>";
 
-      //saveCriterias ->
+      //_saveCriterias ->
       //Note : can use a GLPI function
-      echo "<input type='submit' class='submit' name='saveCriterias' value='". _sx('button', 'Post') ."'>";
+      echo "<input type='submit' class='submit' name='_saveCriterias' value='". _sx('button', 'Post') ."'>";
 
       Html::closeForm();
    }

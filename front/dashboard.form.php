@@ -18,7 +18,7 @@ if (isset($_POST['saveConfig'])) {
     Html::back();
 
 
-} else if (isset($_REQUEST['saveCriterias'])) {
+} else if (isset($_REQUEST['_saveCriterias'])) {
 
     // Save
     $config = array('randname' => 'PluginMreporting'. $_REQUEST['short_classname'] . $_POST['f_name']);
