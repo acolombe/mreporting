@@ -606,7 +606,7 @@ class PluginMreportingCommon extends CommonDBTM {
 
       // save/clear selectors
       if (isset($opt['submit'])) {
-         self::saveSelectors($opt['f_name'], $config);
+         PluginMreportingPreference::saveSelectors($opt['f_name'], $config);
       } elseif (isset($opt['reset'])) {
          PluginMreportingPreference::resetSelectorsForReport($opt['f_name']);
       }
