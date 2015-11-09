@@ -37,7 +37,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
          $entity = $notificationtarget->getEntity();
 
          //if notification from GLPI core is not active
-         $notification_data = PluginMreportingNotification::getNotificationsByEventAndType($event, $item->getType(), $entity);
+         $notification_data = Notification::getNotificationsByEventAndType($event, $item->getType(), $entity);
          if (empty($notification_data)) {
             return true;
          }
@@ -77,6 +77,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
                            unset($email_notprocessed[$users_infos['language']]
                                                     [$users_infos['email']]);
                         }
+
                         if ($tid = $template->getTemplateByLanguage($notificationtarget, $users_infos,
                                                                     $event, $options)) {
                            //Send notification to the user
