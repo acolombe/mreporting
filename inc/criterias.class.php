@@ -230,6 +230,7 @@ class PluginMreportingCriterias extends CommonDBTM {
 
    //Adapted from getConfig() in dashboard class
    static function showFormCriteriasFilters($notification_id) {
+      self::getReportInfosAssociatedTo($notification_id);
       
       //Saved actual mreporting_values session
       $saved_session = isset($_SESSION['mreporting_values']) ? $_SESSION['mreporting_values'] : array();
@@ -301,8 +302,6 @@ class PluginMreportingCriterias extends CommonDBTM {
 
       if ($item->getType() == 'PluginMreportingNotification') {
          echo "<div class='graph_navigation'>";
-         self::getReportInfosAssociatedTo($item->getID());
-
 			self::showFormCriteriasFilters($item->getID());
          echo "</div>";
       }
