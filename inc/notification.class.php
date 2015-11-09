@@ -225,7 +225,7 @@ class PluginMreportingNotification extends Notification {
                   $entity_where
                   AND `glpi_plugin_mreporting_notifications`.report > 0 
                   AND `glpi_plugin_mreporting_notifications`.notificationtemplates_id != 0
-                  AND `glpi_plugin_mreporting_notifications`.`is_active`='1'
+                  AND `glpi_plugin_mreporting_notifications`.`is_active` = '1'
                 ORDER BY `glpi_entities`.`level` DESC";
 
       return $DB->request($query);
@@ -233,6 +233,9 @@ class PluginMreportingNotification extends Notification {
 
    function getSearchOptions() {
       $tab = parent::getSearchOptions();
+
+      //No need 'event' search option (because exist a only event)
+      unset($tab[2]);
 
       //Fix a GLPI bug : Don't want to have 'contain' in search option is_active
       $tab[6]['searchtype']      = array('equals', 'notequals');
