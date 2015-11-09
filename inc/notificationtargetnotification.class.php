@@ -21,14 +21,84 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
    function getDatasForTemplate($event, $options = array()) {
       global $CFG_GLPI;
 
-      $file_name = $this->_buildPDF(mt_rand().'_');
+      //Note : no call to parent, no others markups (in notification)
 
-      $this->datas['##lang.mreporting.file_url##'] = __('Link');
-      $this->datas['##mreporting.file_url##']      = $CFG_GLPI['url_base'].
-                                                      "/index.php?redirect=plugin_mreporting_$file_name";
+      switch ($event) {
+         case 'sendReporting':
+            $file_name = $this->_buildPDF(mt_rand().'_', $options);
+
+            $this->datas['##lang.mreporting.file_url##'] = __('Link');
+            $this->datas['##mreporting.file_url##']      = $CFG_GLPI['url_base'].
+                                                            "/index.php?redirect=plugin_mreporting_$file_name";
+            
+            $this->additionalData['attachment']['path'] = GLPI_PLUGIN_DOC_DIR."/mreporting/notifications/".$file_name;
+            $this->additionalData['attachment']['name'] = $file_name;
+            break;
+      }
+   }
+
+   function showGraph($opt, $export = false, $mreporting_values = array()) {
+
+      if (!isset($opt['hide_title'])) {
+         self::title($opt);
+         $opt['hide_title'] = false;
+      }
+
+      //check the format display charts configured in glpi
+      $opt = $mreporting_values; //$this->initParams($opt, $export);
+      $config = PluginMreportingConfig::initConfigParams($_REQUEST['f_name'], "PluginMreporting".$_REQUEST['short_classname']);
+
+      //generate default date
+      if (!isset($_SESSION['mreporting_values']['date1'.$config['randname']])) {
+         $_SESSION['mreporting_values']['date1'.$config['randname']] = strftime("%Y-%m-%d",
+            time() - ($config['delay'] * 24 * 60 * 60));
+      }
+      if (!isset($_SESSION['mreporting_values']['date2'.$config['randname']])) {
+         $_SESSION['mreporting_values']['date2'.$config['randname']] = strftime("%Y-%m-%d");
+      }
+
+      //self::getSelectorValuesByUser();
+
+      $config = array_merge($config, $mreporting_values);
+
+      //dynamic instanciation of class passed by 'short_classname' GET parameter
+      $classname = 'PluginMreporting'.$_REQUEST['short_classname'];
+
+      if (!class_exists($classname)) {
+         return '';
+      }
+
+      //For exemple for reportHgbarOpenedTicketNumberByCategory : $_POST['status_1'] = '1';
+      foreach ($mreporting_values as $key => $value) {
+         $_POST[$key] = $value;
+      }
+
+      //dynamic call of method passed by 'f_name' GET parameter with previously instancied class
+      $obj = new $classname($config);
+      //TODO : $datas ne tient pas compte des filtres !
+      $datas = $obj->$_REQUEST['f_name'](array_merge($config, $_REQUEST));
+
+      global $LANG;
+
+      //show graph (pgrah type determined by first entry of explode of camelcase of function name
+      $title_func = $LANG['plugin_mreporting'][$_REQUEST['short_classname']][$_REQUEST['f_name']]['title'];
       
-      $this->additionalData['attachment']['path'] = GLPI_PLUGIN_DOC_DIR."/mreporting/notifications/".$file_name;
-      $this->additionalData['attachment']['name'] = $file_name;
+      if (isset($LANG['plugin_mreporting'][$_REQUEST['short_classname']][$_REQUEST['f_name']]['desc'])) {
+         $des_func = $LANG['plugin_mreporting'][$_REQUEST['short_classname']][$_REQUEST['f_name']]['desc'];
+      } else {
+         $des_func = "";
+      }
+
+      $opt['class'] = $classname;
+      $opt['withdata'] = 1;
+      $params = array("raw_datas"   => $datas,
+                       "title"      => $title_func,
+                       "desc"       => $des_func,
+                       "export"     => $export,
+                       "opt"        => array_merge($opt, $_REQUEST));
+
+      $graph = new PluginMreportingGraphpng();
+      return $graph->{'show'.$_REQUEST['gtype']}($params, $_REQUEST['hide_title'], false);
    }
 
 
@@ -37,7 +107,7 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
     *
     * @return string hash Name of the created file
     */
-   private function _buildPDF($user_name = '') {
+   private function _buildPDF($user_name = '', $options) {
       global $CFG_GLPI, $DB, $LANG;
 
       $dir = GLPI_PLUGIN_DOC_DIR.'/mreporting/notifications';
@@ -59,6 +129,8 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       $result = $DB->query('SELECT *
                            FROM glpi_plugin_mreporting_configs
                            WHERE is_active = 1');
+      //$config = new PluginMreportingConfig();
+      //$config->find();
 
       $graphs = array();
       while ($graph = $result->fetch_array()) {
@@ -76,18 +148,21 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       }
 
       foreach ($graphs as $graph) {
+         // Get values from criterias
+         $values = PluginMreportingCriterias::getSelectorValuesByNotification_id($options['notification_id']['id']);
+
          $_REQUEST = array('switchto'        => 'png',
-                           'short_classname' => $graph['class'],
-                           'f_name'          => $graph['method'],
-                           'gtype'           => $graph['type'],
-                           'date1PluginMreporting'.$graph['class'].$graph['method'] => $graph['start'],
-                           'date2PluginMreporting'.$graph['class'].$graph['method'] => $graph['end'],
-                           'randname'        => 'PluginMreporting'.$graph['class'].$graph['method'],
-                           'hide_title'      => false);
-         
+                  'short_classname' => $graph['class'],
+                  'f_name'          => $graph['method'],
+                  'gtype'           => $graph['type'],
+                  'date1PluginMreporting'.$graph['class'].$graph['method'] => $graph['start'],
+                  'date2PluginMreporting'.$graph['class'].$graph['method'] => $graph['end'],
+                  'randname'        => 'PluginMreporting'.$graph['class'].$graph['method'],
+                  'hide_title'      => false);
+
          ob_start();
-         $common = new PluginMreportingCommon();
-         $common->showGraph($_REQUEST);
+         $common = new self();
+         $common->showGraph($_REQUEST, false, $values);
          $content = ob_get_clean();
 
          preg_match_all('/<img .*?(?=src)src=\'([^\']+)\'/si', $content, $matches);

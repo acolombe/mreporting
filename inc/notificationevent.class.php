@@ -78,6 +78,9 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
                                                     [$users_infos['email']]);
                         }
 
+                        //put all fields mreporting notication
+                        $options['notification_id'] = $data; //*All* fields
+
                         if ($tid = $template->getTemplateByLanguage($notificationtarget, $users_infos,
                                                                     $event, $options)) {
                            //Send notification to the user
