@@ -412,13 +412,13 @@ class PluginMreportingHelpdesk Extends PluginMreportingBaseclass {
                                                            $config['randname']);
 
       // Get status to show
-      if(isset($_POST['status_1'])) {
-         foreach($_POST as $key => $value) {
+      if (isset($_POST['status_1'])) {
+         foreach ($_POST as $key => $value) {
             if(substr($key, 0, 7) == 'status_' && $value == 1) {
                $status_to_show[] = substr($key, 7, 1);
             }
          }
-      }else{
+      } else {
          $status_to_show = array('1', '2', '3', '4');
       }
 

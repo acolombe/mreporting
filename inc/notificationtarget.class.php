@@ -59,7 +59,7 @@ class PluginMreportingNotificationTarget extends NotificationTarget {
          $canedit = $notification->can($notifications_id, UPDATE);
 
          if ($canedit) {
-            $target = Toolbox::getItemTypeFormURL(__CLASS__); //CHANGEMENT
+            $target = Toolbox::getItemTypeFormURL(__CLASS__);
 
             echo "<form name='notificationtargets_form' id='notificationtargets_form' method='post' action='$target'>";
             echo "<input type='hidden' name='notifications_id' value='".$notification->getField('id')."'>";

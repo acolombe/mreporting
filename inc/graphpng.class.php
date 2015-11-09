@@ -1170,8 +1170,6 @@ class PluginMreportingGraphpng extends PluginMreportingGraph {
          $$key=$val;
       }
 
-      //$rand = $opt['rand'];
-
       $configs = PluginMreportingConfig::initConfigParams($opt['f_name'], $opt['class']);
 
       foreach ($configs as $k => $v) {
@@ -1179,12 +1177,6 @@ class PluginMreportingGraphpng extends PluginMreportingGraph {
       }
 
       if (self::DEBUG_GRAPH && isset($raw_datas)) Toolbox::logdebug($raw_datas);
-
-      if (isset($raw_datas['datas'])) {
-         $datas = $raw_datas['datas'];
-      } else {
-         $datas = array();
-      }
 
       $options = array("title" => $title,
                         "desc" => $desc,
@@ -1196,10 +1188,13 @@ class PluginMreportingGraphpng extends PluginMreportingGraph {
 
       $this->initGraph($options);
 
+      $datas = isset($raw_datas['datas']) ? $raw_datas['datas'] : array();
+
       if (count($datas) <= 0) {
 
          if ($export!="odtall") {
             echo __("No data for this date range !", 'mreporting');
+
             $end['opt']["export"] = false;
             $end['opt']["randname"] = false;
             $end['opt']["f_name"] = $opt['f_name'];

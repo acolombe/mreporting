@@ -24,13 +24,6 @@ if (isset($_POST['saveConfig'])) {
     $config = array('randname' => 'PluginMreporting'. $_REQUEST['short_classname'] . $_POST['f_name']);
     PluginMreportingCriterias::saveSelectors($_POST['f_name'], $config);
 
-    // Use saved values
-    /*
-    $_REQUEST['f_name'] = $_POST['f_name'];
-    $_REQUEST['short_classname'] = $_POST['short_classname'];
-    PluginMreportingCommon::getSelectorValuesByUser();
-    */
-
     Html::back();
 
 } else if (isset($_POST['addReports'])) {
