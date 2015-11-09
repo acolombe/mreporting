@@ -197,8 +197,8 @@ class PluginMreportingCommon extends CommonDBTM {
                   if ($config->getFromDBByFunctionAndClassname($f_name,$classname)) {
                      if ($config->fields['is_active'] == 1) {
                         $reports[$classname]['functions'][$i]['is_active'] = true;
-                        $reports[$classname]['functions'][$i]['id'] = $config->fields['id'];
                      }
+                     $reports[$classname]['functions'][$i]['id'] = $config->fields['id'];
                      $reports[$classname]['functions'][$i]['right'] = READ;
                      if (isset($_SESSION['glpiactiveprofile'])) {
                         $reports[$classname]['functions'][$i]['right'] = 
@@ -235,7 +235,7 @@ class PluginMreportingCommon extends CommonDBTM {
       echo "</table>";
    }
 
-   static function getSelectAllReports($onchange = false, $setIdInOptionsValues = false, $report_selected = -1) {
+   static function getSelectAllReports($onchange = false, $setIdInOptionsValues = false, $report_selected = -1, $show_inactive = false) {
 
       $common = new self();
       $reports = $common->getAllReports(true);
@@ -248,7 +248,6 @@ class PluginMreportingCommon extends CommonDBTM {
 
       $select  = "<select name='report' $js_onchange>";
       
-
       if ($report_selected == -1) {
          $select .= "<option value='-1' selected>";
       } else {
@@ -259,7 +258,7 @@ class PluginMreportingCommon extends CommonDBTM {
       foreach($reports as $classname => $report) {
          $graphs = array();
          foreach($report['functions'] as $function) {
-            if ($function['is_active']) {
+            if ($function['is_active'] || $show_inactive) {
                $graphs[$function['category_func']][] = $function;
             }
          }
@@ -283,23 +282,18 @@ class PluginMreportingCommon extends CommonDBTM {
                   $select.= "<optgroup label=\"&nbsp;&nbsp;&nbsp;$cat\">";
 
                   $tests = array();
-                  foreach($graph as $key => $value) {
+                  foreach ($graph as $key => $value) {
                      if ($value['right']) {
-                         if ($value['is_active']) {
-                             $comment = "";
-                             if (isset($value["desc"])) {
-                                 $comment = $value["desc"];
-                             }
-                             $option_value = $value["url_graph"];
-                             if ($setIdInOptionsValues) {
-                              $option_value = $value['id'];
-                             }
-                             $icon = self::getIcon($value['function']);
-                             $selected = ($report_selected == $option_value) ? " selected " : "";
-                             $tests[$value['title']] = "<option value='$option_value' $selected title=\"". Html::cleanInputText($comment).
+                        if ($value['is_active'] || $show_inactive) {
+                           $comment = isset($value["desc"]) ? $value["desc"] : "";
+                           $option_value = $setIdInOptionsValues ? $value['id'] : $value["url_graph"];
+
+                           $icon = self::getIcon($value['function']);
+                           $selected = ($report_selected == $option_value) ? " selected " : "";
+                           $tests[$value['title']] = "<option value='$option_value' $selected title=\"". Html::cleanInputText($comment).
                                        "\">&nbsp;&nbsp;&nbsp;".$icon."&nbsp;".
                                        $value["title"]."</option>";
-                         }
+                        }
                      }
                   }
 

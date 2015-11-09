@@ -77,7 +77,7 @@ class PluginMreportingNotification extends Notification {
       echo "<tr class='tab_bg_1'>";
       echo "<td>". __("Report", 'mreporting') ."</td>";
       echo "<td>";
-      echo PluginMreportingCommon::getSelectAllReports(false, true, $this->fields['report']);
+      echo PluginMreportingCommon::getSelectAllReports(false, true, $this->fields['report'], true);
       echo "</td>";
       echo "</tr>";
 
