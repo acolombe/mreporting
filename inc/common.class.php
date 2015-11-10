@@ -235,7 +235,8 @@ class PluginMreportingCommon extends CommonDBTM {
       echo "</table>";
    }
 
-   static function getSelectAllReports($onchange = false, $setIdInOptionsValues = false, $report_selected = -1, $show_inactive = false) {
+   static function getSelectAllReports($onchange = false, $setIdInOptionsValues = false, $report_selected = -1, 
+         $show_inactive = false, $check_right = true) {
 
       $common = new self();
       $reports = $common->getAllReports(true);
@@ -283,7 +284,7 @@ class PluginMreportingCommon extends CommonDBTM {
 
                   $tests = array();
                   foreach ($graph as $key => $value) {
-                     if ($value['right']) {
+                     if ($value['right'] || !$check_right) {
                         if ($value['is_active'] || $show_inactive) {
                            $comment = isset($value["desc"]) ? $value["desc"] : "";
                            $option_value = $setIdInOptionsValues ? $value['id'] : $value["url_graph"];
