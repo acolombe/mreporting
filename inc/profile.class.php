@@ -308,7 +308,10 @@ class PluginMreportingProfile extends CommonDBTM {
          echo "<td>";
          //Quick fix
          if (!isset($reportProfiles->fields['right'])) {
-            $reportProfiles->fields['right'] = 0;
+            $reportProfiles->add(array(
+               'profiles_id' => $profile['id'],
+               'reports' => $items->fields['id'],
+               'right' => 0));
          }
 
          Profile::dropdownNoneReadWrite($profile['id'], 
