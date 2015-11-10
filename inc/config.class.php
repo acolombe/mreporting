@@ -587,6 +587,23 @@ class PluginMreportingConfig extends CommonDBTM {
       return $input;
    }
 
+   static function showPreconfiguration($preconfig) {
+      echo "<table class='tab_cadre_fixe'>";
+      echo "<tr>";
+      echo "<td class='tab_bg_2 center' colspan='2'>";
+      echo __("Preconfiguration")."&nbsp;";
+      $opt = array('value' => $preconfig);
+      $rand = self::dropdownGraph('graphname', $opt);
+      $params = array('graphname' => '__VALUE__');
+      Ajax::updateItemOnSelectEvent("dropdown_graphname$rand", "show_preconfig",
+                                          "../ajax/dropdownGraphs.php",
+                                          $params);
+      echo "<span id='show_preconfig'></span>";
+      echo "</td>";
+      echo "</tr>";
+      echo "</table>";
+   }
+
    function showForm($ID, $options=array()) {
       global $LANG;
 
@@ -603,23 +620,10 @@ class PluginMreportingConfig extends CommonDBTM {
          }
       }
 
-      echo "<table class='tab_cadre_fixe'>";
-      echo "<tr>";
-      echo "<td class='tab_bg_2 center' colspan='2'>";
-      echo __("Preconfiguration")."&nbsp;";
-      $opt = array('value' => $_GET['preconfig']);
-      $rand = self::dropdownGraph('graphname', $opt);
-      $params = array('graphname' => '__VALUE__');
-      Ajax::updateItemOnSelectEvent("dropdown_graphname$rand", "show_preconfig",
-                                          "../ajax/dropdownGraphs.php",
-                                          $params);
-      echo "<span id='show_preconfig'></span>";
-      echo "</td>";
-      echo "</tr>";
-      echo "</table>";
+      self::showPreconfiguration($_GET['preconfig']);
 
-      $style = ($_GET['preconfig']==-1 && $ID <= 0) ? "display:none;" : "'display:block;'";
-      echo "<div id='show_form' style='$style'>";
+      $style = ($_GET['preconfig'] == -1 && $ID <= 0) ? "style='display:none;'" : "";
+      echo "<div id='show_form' $style>";
 
       $this->showFormHeader($options);
 
