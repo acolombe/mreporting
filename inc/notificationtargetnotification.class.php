@@ -107,7 +107,7 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
     *
     * @return string hash Name of the created file
     */
-   private function _buildPDF($user_name = '', $options) {
+   private function _buildPDF($user_name = '', $options = array()) {
       global $CFG_GLPI, $DB, $LANG;
 
       $dir = GLPI_PLUGIN_DOC_DIR.'/mreporting/notifications';
@@ -129,8 +129,6 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       $result = $DB->query('SELECT *
                            FROM glpi_plugin_mreporting_configs
                            WHERE is_active = 1');
-      //$config = new PluginMreportingConfig();
-      //$config->find();
 
       $graphs = array();
       while ($graph = $result->fetch_array()) {
@@ -145,6 +143,12 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
                            ' -'.$graph['default_delay'].' day')),
             'end'       => date('Y-m-d', strtotime(date('Y-m-d 00:00:00').' -1 day')),
          );
+      }
+
+      if (Session::isCron()) {
+         $entities = getSonsOf("glpi_entities", 0);
+         $_SESSION['glpiactiveentities_string'] = "'".implode("', '", $entities)."'";
+         $_SESSION['glpiparententities'] = array();
       }
 
       foreach ($graphs as $graph) {

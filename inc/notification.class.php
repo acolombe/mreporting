@@ -213,8 +213,7 @@ class PluginMreportingNotification extends Notification {
    static function getNotificationsByEventAndType($event, $itemtype, $entity) {
       global $DB;
 
-      $entity_where = getEntitiesRestrictRequest("AND", "glpi_plugin_mreporting_notifications", 'entities_id',
-                                                 $entity, true);
+      $entity_where = getEntitiesRestrictRequest("AND", "glpi_plugin_mreporting_notifications", 'entities_id', $entity, true);
 
       $query = "SELECT `glpi_plugin_mreporting_notifications`.*
                FROM `glpi_plugin_mreporting_notifications`
@@ -231,6 +230,9 @@ class PluginMreportingNotification extends Notification {
       return $DB->request($query);
    }
 
+   /**
+     * @see parent function
+     **/
    function getSearchOptions() {
       $tab = parent::getSearchOptions();
 
