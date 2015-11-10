@@ -166,6 +166,11 @@ class PluginMreportingCriterias extends CommonDBTM {
       $obj = new $classname($config);
       $obj->$graphname($config);
 
+      //Security for external classes
+      if (!isset($_SESSION['mreporting_selector'][$graphname])) {
+         $_SESSION['mreporting_selector'][$graphname] = array();
+      }
+
       //Note : can remove only begin date or end date selector because selector is 'dateinterval'
 
       //Remove begin date selector and end date selector
