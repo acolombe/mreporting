@@ -5,11 +5,12 @@ Session::checkRight("profile", READ);
 
 $config = new PluginMreportingConfig();
 $res = $config->find();
+
 $profil = new PluginMreportingProfile();
 
 //Save profile
 if (isset ($_REQUEST['update'])) {
-   foreach($res as $report) {
+   foreach ($res as $report) {
       if (class_exists($report['classname'])) {
          $access = $_REQUEST[$report['id']];
 
@@ -22,8 +23,9 @@ if (isset ($_REQUEST['update'])) {
 
 } else if (isset ($_REQUEST['add'])) {
    $query = "SELECT `id`, `name`
-   FROM `glpi_profiles` WHERE `interface` = 'central'
-   ORDER BY `name`";
+            FROM `glpi_profiles` 
+            WHERE `interface` = 'central'
+            ORDER BY `name`";
 
    foreach ($DB->request($query) as $profile) {
       $access = $_REQUEST[$profile['id']];
@@ -34,7 +36,7 @@ if (isset ($_REQUEST['update'])) {
       $profil->update($profil->fields);
    }
 
-} else if (isset($_REQUEST['giveReadAccessForAllReport'])){
+} else if (isset($_REQUEST['giveReadAccessForAllReport'])) {
    foreach($res as $report) {
       $profil->getFromDBByQuery("WHERE profiles_id = ".$_REQUEST['profile_id'].
                                    " AND reports = ".$report['id']);
@@ -42,18 +44,18 @@ if (isset ($_REQUEST['update'])) {
       $profil->update($profil->fields);
    }
 
-} else if (isset($_REQUEST['giveNoneAccessForAllReport'])){
-   foreach($res as $report) {
+} else if (isset($_REQUEST['giveNoneAccessForAllReport'])) {
+   foreach ($res as $report) {
       $profil->getFromDBByQuery("WHERE profiles_id = ".$_REQUEST['profile_id'].
                                " AND reports = ".$report['id']);
       $profil->fields['right'] = 'NULL';
       $profil->update($profil->fields);
    }
 
-} else if (isset($_REQUEST['giveNoneAccessForAllProfile'])){
+} else if (isset($_REQUEST['giveNoneAccessForAllProfile'])) {
    $query = "SELECT `id`, `name`
-   FROM `glpi_profiles`
-   ORDER BY `name`";
+            FROM `glpi_profiles`
+            ORDER BY `name`";
 
    foreach ($DB->request($query) as $profile) {
       $profil->getFromDBByQuery("WHERE profiles_id = ".$profile['id'].
@@ -62,10 +64,10 @@ if (isset ($_REQUEST['update'])) {
       $profil->update($profil->fields);
    }
 
-} else if (isset($_REQUEST['giveReadAccessForAllProfile'])){
+} else if (isset($_REQUEST['giveReadAccessForAllProfile'])) {
    $query = "SELECT `id`, `name`
-   FROM `glpi_profiles`
-   ORDER BY `name`";
+            FROM `glpi_profiles`
+            ORDER BY `name`";
 
    foreach ($DB->request($query) as $profile) {
       $profil->getFromDBByQuery("WHERE profiles_id = ".$profile['id'].
@@ -75,4 +77,5 @@ if (isset ($_REQUEST['update'])) {
    }
 
 }
+
 Html::back();

@@ -110,7 +110,7 @@ class PluginMreportingProfile extends CommonDBTM {
    /**
    * @param $right array
    */
-   static function addRightToProfiles($right){
+   static function addRightToProfiles($right) {
       global $DB;
 
       //TODO : We need to reload cache before else GLPI don't show migration table
@@ -135,7 +135,7 @@ class PluginMreportingProfile extends CommonDBTM {
    }
 
 
-   static function getRight(){
+   static function getRight() {
       global $DB;
 
       $query = "SELECT `profiles_id` 
@@ -276,7 +276,7 @@ class PluginMreportingProfile extends CommonDBTM {
    * Form to manage right on reports
    * @param $items
    */
-   function showFormForManageProfile($items,$options=array()){
+   function showFormForManageProfile($items, $options=array()) {
       global $DB, $CFG_GLPI;
 
       if (!Session::haveRight("config", READ)) {
@@ -286,21 +286,24 @@ class PluginMreportingProfile extends CommonDBTM {
       $target = isset($options['target']) ? $options['target'] : $this->getFormURL();
       
       echo '<form action="'.$target.'" method="post" name="form">';
-      echo "<table class='tab_cadre_fixe'>\n";
-      echo "<tr><th colspan='3'>".__("Rights management", 'mreporting')."</th></tr>\n";
+      echo "<table class='tab_cadre_fixe tab_bg_1'>";
+      echo "<tr>";
+      echo "<th colspan='3'>".__("Rights management", 'mreporting')."</th>";
+      echo "</tr>";
 
       $query = "SELECT `id`, `name`
                FROM `glpi_profiles`
                ORDER BY `name`";
 
+      $reportProfiles = new self();
+      $prof = new Profile();
+      
       foreach ($DB->request($query) as $profile) {
-         $reportProfiles = new self();
-         $reportProfiles = $reportProfiles->findByProfileAndReport($profile['id'],$items->fields['id']);
+         $reportProfiles = $reportProfiles->findByProfileAndReport($profile['id'], $items->fields['id']);
 
-         $prof = new Profile();
          $prof->getFromDB($profile['id']);
 
-         echo "<tr class='tab_bg_1'>";
+         echo "<tr>";
          echo "<td>".$prof->getLink()."</td>";
          echo "<td>";
          //Quick fix
@@ -322,7 +325,7 @@ class PluginMreportingProfile extends CommonDBTM {
 
       echo "<input type='submit' style='background-image: url(".$CFG_GLPI['root_doc'].
            "/pics/sub_dropdown.png);background-repeat:no-repeat; width:14px;border:none;cursor:pointer;' ".
-           "name='giveNoneAccessForAllProfile' value='' title='".__('Deselect all')."'><br><br>";
+           "name='giveNoneAccessForAllProfile' value='' title='".__('Deselect all')."'>";
       echo "</div>";
      
       echo "<div class='center'>";
