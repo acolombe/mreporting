@@ -136,6 +136,14 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       $graphs = array();
       while ($graph = $result->fetch_array()) {
          $type = preg_split('/(?<=\\w)(?=[A-Z])/', $graph['name']);
+
+         //Use delay from mreporting Notification
+         if (!empty($options['notification_id']['default_delay'])) {
+            $delay = $options['notification_id']['default_delay'];
+         } else {
+            //Delay from graph config
+            $delay = $graph['default_delay'];
+         }
          
          $graphs[] = array(
             'class'     => substr($graph['classname'], 16),
@@ -143,7 +151,7 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
             'method'    => $graph['name'],
             'type'      => $type[1],
             'start'     => date('Y-m-d', strtotime(date('Y-m-d 00:00:00').
-                           ' -'.$graph['default_delay'].' day')),
+                           ' -'.$delay.' day')),
             'end'       => date('Y-m-d', strtotime(date('Y-m-d 00:00:00').' -1 day')),
          );
       }
