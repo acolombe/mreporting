@@ -22,7 +22,6 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
 
       //If notifications are enabled in GLPI's configuration
       if ($CFG_GLPI["use_mailing"]) {
-         $email_processed    = array();
          $email_notprocessed = array();
 
          $options['entities_id'] = 0;
@@ -63,6 +62,8 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
             //Foreach mreporting notification targets
             foreach ($targets as $target) {
 
+               $email_processed = array();
+
                //Get all users affected by this notification
                $notificationtarget->getAddressesByTarget($target,$options);
 
@@ -97,6 +98,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
                               echo "<td>".$users_infos['email']."</td>";
                               echo "</tr>";
                            }
+
                            $email_processed[$users_infos['language']][$users_infos['email']]
                                                                      = $users_infos;
                         } else {
@@ -109,7 +111,6 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
             }
          }
       }
-      unset($email_processed);
       unset($email_notprocessed);
       $template = null;
       return true;

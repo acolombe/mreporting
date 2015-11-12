@@ -103,7 +103,7 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
 
 
    /**
-    * Generate a PDF file (with mreporting reports) to be send in the notifications
+    * Generate a PDF file (with mreporting reports)
     *
     * @return string hash Name of the created file
     */
@@ -118,7 +118,9 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
 
       require_once GLPI_ROOT.'/plugins/mreporting/lib/tcpdf/tcpdf.php';
 
+      // For have months in French (example : 'November' -> 'Novembre')
       setlocale(LC_TIME, 'fr_FR.utf8', 'fra');
+
       ini_set('memory_limit', '256M');
       set_time_limit(300);
 
@@ -128,7 +130,8 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
 
       $result = $DB->query('SELECT *
                            FROM glpi_plugin_mreporting_configs
-                           WHERE is_active = 1');
+                           WHERE is_active = 1 
+                              AND id = '.$options['notification_id']['report']);
 
       $graphs = array();
       while ($graph = $result->fetch_array()) {
@@ -152,8 +155,15 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       }
 
       foreach ($graphs as $graph) {
+
          // Get values from criterias
          $values = PluginMreportingCriterias::getSelectorValuesByNotification_id($options['notification_id']['id']);
+
+         if (isset($_SESSION['mreporting_values'])) { //never ?
+            $_SESSION['mreporting_values'] = array_merge($_SESSION['mreporting_values'], $values);
+         } else {
+            $_SESSION['mreporting_values'] = $values;
+         }
 
          $_REQUEST = array('switchto'        => 'png',
                   'short_classname' => $graph['class'],
