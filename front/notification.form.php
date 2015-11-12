@@ -35,10 +35,11 @@ if (isset($_POST["add"])) {
 } else if (isset($_POST["update"])) {
    $notification->check($_POST["id"], UPDATE);
 
-   $notification->update($_POST);
-   Event::log($_POST["id"], "pluginmreportingnotifications", 4, "notification",
-              //TRANS: %s is the user login
-              sprintf(__('%s updates an item'), $_SESSION["glpiname"]));
+   if ($notification->update($_POST)) {
+      Event::log($_POST["id"], "pluginmreportingnotifications", 4, "notification",
+                 //TRANS: %s is the user login
+                 sprintf(__('%s updates an item'), $_SESSION["glpiname"]));
+   }
    Html::back();
 
 } else {
