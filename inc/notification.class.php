@@ -37,14 +37,17 @@ class PluginMreportingNotification extends Notification {
 
    function prepareInputForAdd($input) {
 
-      if (empty($_POST['name'])) {
+      if (empty($input['name'])) {
          Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __('Name'), false, ERROR);
          return false;
       }
 
-      // Quick Hack
-      if (isset($input['report']) && !empty($input['report'])) {
+      if (isset($input['report']) && $input['report'] > 0) {
+         // Quick Hack
          $input["report_name"] = self::getReportName($input['report']);
+      } else {
+         Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __("Report", 'mreporting'), false, ERROR);
+         return false;
       }
       return $input;
    }
@@ -56,9 +59,12 @@ class PluginMreportingNotification extends Notification {
          return false;
       }
 
-      // Quick Hack
-      if (isset($input['report']) && !empty($input['report'])) {
+      if (isset($input['report']) && $input['report'] > 0) {
+         // Quick Hack
          $input["report_name"] = self::getReportName($input['report']);
+      } else {
+         Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __("Report", 'mreporting'), false, ERROR);
+         return false;
       }
       return $input;
    }
@@ -121,7 +127,7 @@ class PluginMreportingNotification extends Notification {
 
       // Select report
       echo "<tr class='tab_bg_1'>";
-      echo "<td>". __("Report", 'mreporting') ."</td>";
+      echo "<td>". __("Report", 'mreporting') ." <span class='red'>*</span></td>";
       echo "<td>";
       echo PluginMreportingCommon::getSelectAllReports(false, true, $this->fields['report'], true, false);
       echo "</td>";
