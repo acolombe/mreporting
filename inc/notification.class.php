@@ -81,6 +81,14 @@ class PluginMreportingNotification extends Notification {
       echo "</td>";
       echo "</tr>";
 
+      // Delay
+      echo "<tr class='tab_bg_1'>";
+      echo "<td><label>". _n("Time", "Times", 1) ."</label></td>"; //__("Default delay", 'mreporting')
+      echo "<td>";
+      echo Html::input('default_delay', array('size' => 10, 'value' => $this->fields['default_delay']));
+      echo "</td>";
+      echo "</tr>";
+
       $this->showFormButtons($options);
       return true;
    }
@@ -114,23 +122,6 @@ class PluginMreportingNotification extends Notification {
          	'content_text'             => __("Hello,\n\nGLPI reports are available.\nYou will find attached in this email.\n\n", 'mreporting'),
          	'content_html'             => $content_html)
          );
-
-         // Création de la notification
-         $notification = new Notification();
-         $notification_id = $notification->add(array(
-            'name'                     => __('Notification for "More Reporting"', 'mreporting'),
-            'comment'                  => "",
-            'entities_id'              => 0,
-            'is_recursive'             => 1,
-            'is_active'                => 1,
-            'itemtype'                 => __CLASS__,
-            'notificationtemplates_id' => $template_id,
-            'event'                    => 'sendReporting',
-            'mode'                     => 'mail')
-         );
-
-         $DB->query('INSERT INTO glpi_notificationtargets (items_id, type, notifications_id)
-              VALUES (1, 1, ' . $notification_id . ');');
       }
 
       $table = self::getTable();
@@ -164,8 +155,23 @@ class PluginMreportingNotification extends Notification {
       // == UPDATE TO 0.90+1.2
 
       // This new field is for save a report id
-      $migration->addField(self::getTable(), 'report', "INT(11) NULL DEFAULT '0'");
-      $migration->migrationOneTable(self::getTable());
+      $migration->addField($table, 'report', "INT(11) NULL DEFAULT '0'");
+      $migration->addField($table, 'default_delay', "VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci'");
+      $migration->migrationOneTable($table);
+
+      // == Delete core notification ==
+
+      // Delete targets of core notification
+      $notification = new Notification();
+      foreach ($notification->find("itemtype = '".__CLASS__."'") as $notif) {
+         $DB->query("DELETE FROM glpi_notificationtargets WHERE notifications_id = ".$notif['id']);
+      }
+
+      //Note : can delete Log attached to this
+
+      // Delete core notification
+      $query = "DELETE FROM glpi_notifications WHERE itemtype = '".__CLASS__."'";
+      $DB->query($query);
 
    }
 
@@ -176,8 +182,6 @@ class PluginMreportingNotification extends Notification {
     */
    static function uninstall(Migration $migration) {
       global $DB;
-
-      //TODO : read and check this code
 
       $queries = array();
 
