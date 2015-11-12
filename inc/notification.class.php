@@ -18,6 +18,41 @@ class PluginMreportingNotification extends Notification {
       return $ong;
    }
 
+   static function getReportName($report_id) {
+      global $LANG;
+
+      $config = new PluginMreportingConfig();
+      if ($config->getFromDB($report_id)) {
+         $class = substr($config->fields['classname'], 16);
+
+         $report_code = $config->fields['name'];
+
+         if (isset($LANG['plugin_mreporting'][$class][$report_code]['title'])) { //"Security"
+            return $LANG['plugin_mreporting'][$class][$report_code]['title'];
+         }
+      }
+
+      return "";
+   }
+
+   function prepareInputForAdd($input) {
+
+      // Quick Hack
+      if (isset($input['report']) && !empty($input['report'])) {
+         $input["report_name"] = self::getReportName($input['report']);
+      }
+      return $input;
+   }
+
+   function prepareInputForUpdate($input) {
+
+      // Quick Hack
+      if (isset($input['report']) && !empty($input['report'])) {
+         $input["report_name"] = self::getReportName($input['report']);
+      }
+      return $input;
+   }
+
    function showForm($ID, $options=array()) {
       global $CFG_GLPI;
 
@@ -158,6 +193,7 @@ class PluginMreportingNotification extends Notification {
       // This new field is for save a report id
       $migration->addField($table, 'report', "INT(11) NULL DEFAULT '0'");
       $migration->addField($table, 'default_delay', "VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci'");
+      $migration->addField($table, 'report_name', "VARCHAR(255) NULL DEFAULT '' COLLATE 'utf8_unicode_ci'");
       $migration->migrationOneTable($table);
 
       // == Delete core notification ==
@@ -248,7 +284,25 @@ class PluginMreportingNotification extends Notification {
       unset($tab[2]);
 
       //Fix a GLPI bug : Don't want to have 'contain' in search option is_active
-      $tab[6]['searchtype']      = array('equals', 'notequals');
+      $tab[6]['searchtype'] = array('equals', 'notequals');
+
+      // Report (name of)
+      $tab[100] = array(
+            'table'         => $this->getTable(),
+            'field'         => 'report_name',
+            'name'          => __("Report", 'mreporting'),
+            'searchtype'    => 'contains',
+            'massiveaction' => false,
+      );
+
+      // Delay
+      $tab[101] = array(
+            'table'         => $this->getTable(),
+            'field'         => 'default_delay',
+            'name'          => _n("Time", "Times", 1),
+            'searchtype'    => 'contains',
+            'massiveaction' => true,
+      );
 
       return $tab;
    }
