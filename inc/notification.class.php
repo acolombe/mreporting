@@ -203,6 +203,9 @@ class PluginMreportingNotification extends Notification {
                         WHERE id = " . $template_id;
       }
 
+      // Cleanup since 0.90+1.2
+      $queries[] = "DELETE FROM glpi_events WHERE type = 'pluginmreportingnotifications'";
+
       foreach ($queries as $query) {
          $DB->query($query);
       }

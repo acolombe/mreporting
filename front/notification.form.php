@@ -18,7 +18,7 @@ if (isset($_POST["add"])) {
       Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __('Name'), false, ERROR);
    } else {
       $newID = $notification->add($_POST);
-      Event::log($newID, "notifications", 4, "notification",
+      Event::log($newID, "pluginmreportingnotifications", 4, "notification",
                  sprintf(__('%1$s adds the item %2$s'), $_SESSION["glpiname"], $_POST["name"]));
    }
    Html::redirect($_SERVER['PHP_SELF']."?id=$newID");
@@ -27,7 +27,7 @@ if (isset($_POST["add"])) {
    $notification->check($_POST["id"], PURGE);
    $notification->delete($_POST, 1);
 
-   Event::log($_POST["id"], "notifications", 4, "notification",
+   Event::log($_POST["id"], "pluginmreportingnotifications", 4, "notification",
               //TRANS: %s is the user login
               sprintf(__('%s purges an item'), $_SESSION["glpiname"]));
    $notification->redirectToList();
@@ -36,7 +36,7 @@ if (isset($_POST["add"])) {
    $notification->check($_POST["id"], UPDATE);
 
    $notification->update($_POST);
-   Event::log($_POST["id"], "notifications", 4, "notification",
+   Event::log($_POST["id"], "pluginmreportingnotifications", 4, "notification",
               //TRANS: %s is the user login
               sprintf(__('%s updates an item'), $_SESSION["glpiname"]));
    Html::back();
