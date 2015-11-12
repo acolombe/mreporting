@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: GLPI - Mreporting plugin 1.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-06 11:54+0100\n"
+"PO-Revision-Date: 2015-11-12 18:01+0100\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -264,6 +264,9 @@ msgstr[1] "More reporting notifications"
 
 msgid "Report"
 msgstr "Report"
+
+msgid "A required field is empty:"
+msgstr "A required field is empty:"
 
 msgid "Setting the start date and the end date is in the configuration of the report."
 msgstr "Setting the start date and the end date is in the configuration of the report."

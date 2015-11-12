@@ -13,15 +13,15 @@ $notification = new PluginMreportingNotification();
 if (isset($_POST["add"])) {
    $notification->check(-1, CREATE,$_POST);
 
-   if (empty($_POST['name'])) {
-      //TODO : add this string to locales
-      Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __('Name'), false, ERROR);
-   } else {
-      $newID = $notification->add($_POST);
+   $newID = $notification->add($_POST);
+   if ($newID) {
       Event::log($newID, "pluginmreportingnotifications", 4, "notification",
-                 sprintf(__('%1$s adds the item %2$s'), $_SESSION["glpiname"], $_POST["name"]));
+              sprintf(__('%1$s adds the item %2$s'), $_SESSION["glpiname"], $_POST["name"]));
+
+      Html::redirect($_SERVER['PHP_SELF']."?id=$newID");
+   } else {
+      Html::back();
    }
-   Html::redirect($_SERVER['PHP_SELF']."?id=$newID");
 
 } else if (isset($_POST["purge"])) {
    $notification->check($_POST["id"], PURGE);

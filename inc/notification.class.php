@@ -37,6 +37,11 @@ class PluginMreportingNotification extends Notification {
 
    function prepareInputForAdd($input) {
 
+      if (empty($_POST['name'])) {
+         Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __('Name'), false, ERROR);
+         return false;
+      }
+
       // Quick Hack
       if (isset($input['report']) && !empty($input['report'])) {
          $input["report_name"] = self::getReportName($input['report']);
@@ -45,6 +50,11 @@ class PluginMreportingNotification extends Notification {
    }
 
    function prepareInputForUpdate($input) {
+
+      if (empty($input['name'])) {
+         Session::addMessageAfterRedirect(__('A required field is empty:', 'mreporting') . ' ' . __('Name'), false, ERROR);
+         return false;
+      }
 
       // Quick Hack
       if (isset($input['report']) && !empty($input['report'])) {

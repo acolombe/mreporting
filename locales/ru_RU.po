@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: GLPI - Mreporting plugin 1.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-08 17:58+0100\n"
-"PO-Revision-Date: 2015-11-06 11:54+0100\n"
+"PO-Revision-Date: 2015-11-12 18:01+0100\n"
 "Last-Translator: Aleksey Petukhov <lexx015@gmail.com>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
@@ -253,6 +253,10 @@ msgstr[1] ""
 
 msgid "Report"
 msgstr ""
+
+# Translation copy-paste from mreporting
+msgid "A required field is empty:"
+msgstr "Требуемое поле пустое:"
 
 msgid "Setting the start date and the end date is in the configuration of the report."
 msgstr ""
