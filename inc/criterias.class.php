@@ -18,7 +18,7 @@ class PluginMreportingCriterias extends CommonDBTM {
 
       $table = self::getTable();
 
-		$query = "CREATE TABLE `$table` (
+		$query = "CREATE TABLE IF NOT EXISTS `$table` (
                   `id` INT(11) NOT NULL AUTO_INCREMENT,
                   `notification_id` INT(11) NOT NULL DEFAULT '0',
                   `selectors` TEXT NOT NULL,

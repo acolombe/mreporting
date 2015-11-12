@@ -126,7 +126,7 @@ class PluginMreportingNotification extends Notification {
 
       $table = self::getTable();
 
-      $query = "CREATE TABLE `$table` (
+      $query = "CREATE TABLE IF NOT EXISTS `$table` (
                   `id` INT(11) NOT NULL AUTO_INCREMENT,
                   `name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
                   `entities_id` INT(11) NOT NULL DEFAULT '0',

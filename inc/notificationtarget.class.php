@@ -26,7 +26,7 @@ class PluginMreportingNotificationTarget extends NotificationTarget {
     $table = self::getTable();
 
 		//From glpi_notificationtargets
-		$query = "CREATE TABLE `$table` (
+		$query = "CREATE TABLE IF NOT EXISTS `$table` (
 						`id` INT(11) NOT NULL AUTO_INCREMENT,
 						`items_id` INT(11) NOT NULL DEFAULT '0',
 						`type` INT(11) NOT NULL DEFAULT '0',
