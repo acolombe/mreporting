@@ -27,7 +27,8 @@ class PluginMreportingNotification extends Notification {
       // Display only event(s) and templates associated to Mreporting notification
       $this->fields['itemtype'] = __CLASS__;
 
-      echo "<tr class='tab_bg_1'><td>" . __('Name') . "</td>";
+      // Name (mandatory field)
+      echo "<tr class='tab_bg_1'><td>" . __('Name') . " <span class='red'>*</span></td>";
       echo "<td>";
       Html::autocompletionTextField($this, "name");
       echo "</td>";
