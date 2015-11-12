@@ -35,12 +35,6 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
 
          $entity = $notificationtarget->getEntity();
 
-         //if notification from GLPI core is not active
-         $notification_data = Notification::getNotificationsByEventAndType($event, $item->getType(), $entity);
-         if (empty($notification_data)) {
-            return true;
-         }
-
          //Foreach mreporting notification
          foreach (PluginMreportingNotification::getNotificationsByEventAndType($event, $item->getType(), $entity)
                   as $data) {
