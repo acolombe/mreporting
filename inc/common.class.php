@@ -1519,29 +1519,43 @@ class PluginMreportingCommon extends CommonDBTM {
    static function selectorCategory($type = true) {
       global $CFG_GLPI;
 
-      echo "<br /><b>"._n('Ticket category', 'Ticket categories', 2) ." : </b><br />";
-      if ($type) {
-         $params = array('type'            => '__VALUE__',
-                         'currenttype'     => Ticket::INCIDENT_TYPE,
-                         'entity_restrict' => -1,
-                         'condition'       => "`is_incident`='1'",
-                         'value'           => isset($_SESSION['mreporting_values']['itilcategories_id']) 
-                                              ? $_SESSION['mreporting_values']['itilcategories_id'] 
-                                              : 0);
-         echo "<span id='show_category_by_type'>";
-      }
-
-      $params['comments'] = false;
-      ITILCategory::dropdown($params);
+      echo "<br /><b>". ITILCategory::getTypeName(2) ." : </b><br />";
 
       if ($type) {
-         echo "</span>";
-
          $rand = Ticket::dropdownType('type', 
                              array('value' => isset($_SESSION['mreporting_values']['type']) 
                                               ? $_SESSION['mreporting_values']['type'] 
                                               : Ticket::INCIDENT_TYPE, 
                                     'toadd' => array(-1 => __('All'))));
+         $condition = "";
+
+         if (isset($_SESSION['mreporting_values']['type'])) {
+            switch ($_SESSION['mreporting_values']['type']) {
+               case Ticket::INCIDENT_TYPE :
+                  $condition = "`is_incident`='1'";
+                  break;
+
+               case Ticket::DEMAND_TYPE:
+                  $condition = "`is_request`='1'";
+                  break;
+            }
+         }
+
+         $params = array('type'            => '__VALUE__',
+                         'currenttype'     => Ticket::INCIDENT_TYPE,
+                         'entity_restrict' => -1,
+                         'condition'       => $condition);
+         echo "<span id='show_category_by_type'>";
+      }
+
+      $params['value'] = isset($_SESSION['mreporting_values']['itilcategories_id']) 
+                                              ? $_SESSION['mreporting_values']['itilcategories_id'] 
+                                              : 0;
+      $params['comments'] = false;
+      ITILCategory::dropdown($params);
+
+      if ($type) {
+         echo "</span>";
 
          Ajax::updateItemOnSelectEvent("dropdown_type$rand", "show_category_by_type",
                                        $CFG_GLPI["root_doc"]."/ajax/dropdownTicketCategories.php",
