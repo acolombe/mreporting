@@ -34,7 +34,12 @@ class PluginMreportingBaseclass {
              $sql_date_solve,
              $sql_date_closed,
              $filters,
-             $where_entities;
+             $where_entities,
+             $sql_type,
+             $sql_itilcat,
+             $sql_user_assign,
+             $sql_group_assign,
+             $sql_group_request;
 
    function __construct($config = array()) {
       global $DB, $LANG;
