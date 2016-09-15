@@ -244,7 +244,7 @@ class PluginMreportingNotification extends Notification {
                   `sending_hour` TIME NOT NULL,
                   `frequency` INT(11) NOT NULL DEFAULT 86400,
                   `lastrun` TIMESTAMP NULL DEFAULT NULL,
-                  `nextrun` TIMESTAMP NULL DEFAULT NULL
+                  `nextrun` TIMESTAMP NULL DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   INDEX `name` (`name`),
                   INDEX `itemtype` (`itemtype`),
