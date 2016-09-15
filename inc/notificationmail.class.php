@@ -4,7 +4,7 @@ if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
 
-require_once(GLPI_PHPMAILER_DIR . "/class.phpmailer.php");
+require_once(GLPI_ROOT . "/inc/glpimailer.class.php");
 
 /**
  *  NotificationMail class extends phpmail and implements the NotificationInterface

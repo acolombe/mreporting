@@ -49,13 +49,8 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
       $config = PluginMreportingConfig::initConfigParams($_REQUEST['f_name'], "PluginMreporting".$_REQUEST['short_classname']);
 
       //generate default date
-      if (!isset($_SESSION['mreporting_values']['date1'.$config['randname']])) {
-         $_SESSION['mreporting_values']['date1'.$config['randname']] = strftime("%Y-%m-%d",
-            time() - ($config['delay'] * 24 * 60 * 60));
-      }
-      if (!isset($_SESSION['mreporting_values']['date2'.$config['randname']])) {
-         $_SESSION['mreporting_values']['date2'.$config['randname']] = strftime("%Y-%m-%d");
-      }
+      $_SESSION['mreporting_values']['date1'.$config['randname']] = $opt['start'];
+      $_SESSION['mreporting_values']['date2'.$config['randname']] = $opt['end'];
 
       //self::getSelectorValuesByUser();
 
@@ -144,15 +139,20 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
             //Delay from graph config
             $delay = $graph['default_delay'];
          }
+
+         $start   = date('Y-m-d', strtotime(date('Y-m-d 00:00:00').' -'.$delay.' day'));
+         $end     = date('Y-m-d', strtotime(date('Y-m-d 00:00:00').' -1 day'));
+
+         if (isset($options['start'])) { $start = $options['start']; }
+         if (isset($options['end']))   { $end   = $options['end'];   }
          
          $graphs[] = array(
             'class'     => substr($graph['classname'], 16),
             'classname' => $graph['classname'],
             'method'    => $graph['name'],
             'type'      => $type[1],
-            'start'     => date('Y-m-d', strtotime(date('Y-m-d 00:00:00').
-                           ' -'.$delay.' day')),
-            'end'       => date('Y-m-d', strtotime(date('Y-m-d 00:00:00').' -1 day')),
+            'start'     => $start,
+            'end'       => $end,
          );
       }
 
@@ -166,6 +166,9 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
 
          // Get values from criterias
          $values = PluginMreportingCriterias::getSelectorValuesByNotification_id($options['notification_id']['id']);
+
+         $values['start']  = $start;
+         $values['end']    = $end;
 
          if (isset($_SESSION['mreporting_values'])) { //never ?
             $_SESSION['mreporting_values'] = array_merge($_SESSION['mreporting_values'], $values);

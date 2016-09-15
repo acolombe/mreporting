@@ -38,6 +38,63 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
          //Foreach mreporting notification
          foreach (PluginMreportingNotification::getNotificationsByEventAndType($event, $item->getType(), $entity)
                   as $data) {
+
+            $nextrun      = $data['nextrun'];
+            $sendingHour  = $data['sending_hour'];
+            $frequency    = $data['frequency'];
+            $sendingDay   = $data['sending_day'];
+            $timestamp    = date('Y-m-d H:i:00');
+            $hour         = date('H:i:00');
+            $monthDay     = date('d');
+            $weekDay      = date('w')+1;  // +1 because
+                                          // Sunday = 1 in MySQL and
+                                          // Sunday = 0 in PHP...
+
+            // If sending day > last day of this month : reset sending day to last day of this month
+            if ($sendingDay > date('t')) {
+              $sendingDay = date('t');
+            }
+
+            if (
+              $nextrun    !== NULL          && $timestamp !== $nextrun      ||
+              $hour       !== $sendingHour                                  ||
+              $frequency   == 604800        && $weekDay   !== $sendingDay   ||
+              $frequency   == 2592000       && $monthDay  !== $sendingDay
+            ) {
+              continue; // skip current notification
+            }
+
+            switch ($frequency) {
+              default       : $start = $end = '-1 day'; break;
+              case 86400    : $start = $end = '-1 day'; break;
+              case 604800   :
+                $start  = 'last week'; # = Monday of last week
+                $end    = 'last week +4 days'; # = Friday of last week (last Monday +4 days)
+                break;
+              case 2592000  :
+                $start  = 'first day of last month';
+                $end    = 'last day of last month';
+                break;
+            }
+
+            $options['start']   = date('Y-m-d 00:01:00', strtotime($start));
+            $options['end']     = date('Y-m-d 23:59:00', strtotime($end));
+            
+            // if frequency = month & time+frequency > last day of next month :
+            // nextrun = last day of next month
+            $nextrunTimestamp   = time()+$frequency;
+            if ($frequency == 2592000 && $nextrunTimestamp > strtotime('last day of next month')) {
+              $nextrunTimestamp = strtotime('last day of next month');
+            }
+
+            // Update lastrun/nextrun
+            $notification     = new PluginMreportingNotification();
+            $data['lastrun']  = date('Y-m-d H:i');
+            $data['nextrun']  = date('Y-m-d ', $nextrunTimestamp);
+            $data['nextrun'] .= $sendingHour;
+            $notification->update($data);
+
+
             $targets = getAllDatasFromTable(getTableForItemType('PluginMreportingNotificationTarget'), 'notifications_id = '.$data['id']);
 
             $notificationtarget->clearAddressesList();
@@ -53,10 +110,10 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
 
             $can_notify_me = Session::isCron() ? true : $_SESSION['glpinotification_to_myself'];
 
+            $email_processed = array();
+
             //Foreach mreporting notification targets
             foreach ($targets as $target) {
-
-               $email_processed = array();
 
                //Get all users affected by this notification
                $notificationtarget->getAddressesByTarget($target,$options);

@@ -35,6 +35,24 @@ if (isset($_POST["add"])) {
 } else if (isset($_POST["update"])) {
    $notification->check($_POST["id"], UPDATE);
 
+   if (isset($_POST['lastrun'])) {
+
+      $lastrun_tmstmp    = strtotime($_POST['lastrun']);
+      $nextrun_tmstmp    = $lastrun_tmstmp+$_POST['frequency'];
+
+      if ($_POST['frequency'] == 2592000 && $nextrun_tmstmp > strtotime('last day of next month')) {
+        $nextrun_tmstmp = strtotime('last day of next month');
+      }
+
+      $_POST['nextrun']  = date('Y-m-d ', $nextrun_tmstmp);
+      $_POST['nextrun'] .= $_POST['sending_hour'];
+
+   }
+
+   if (!isset($_POST['sending_day'])) {
+    $_POST['sending_day'] = 'NULL';
+   }
+
    if ($notification->update($_POST)) {
       Event::log($_POST["id"], "pluginmreportingnotifications", 4, "notification",
                  //TRANS: %s is the user login

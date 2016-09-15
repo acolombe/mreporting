@@ -133,13 +133,63 @@ class PluginMreportingNotification extends Notification {
       echo "</td>";
       echo "</tr>";
 
-      // Delay
+      // Frequency
       echo "<tr class='tab_bg_1'>";
-      echo "<td><label>". _n("Time", "Times", 1) ."</label></td>"; //__("Default delay", 'mreporting')
+      echo "<td><label>".__('Run frequency')."</label></td>";
       echo "<td>";
-      echo Html::input('default_delay', array('size' => 10, 'value' => $this->fields['default_delay']));
+      $randname = mt_rand();
+      Dropdown::showFromArray('frequency',
+                              array(DAY_TIMESTAMP=>__('Each day'),
+                                    WEEK_TIMESTAMP=>__('Each week'),
+                                    MONTH_TIMESTAMP=>__('Each month')),
+                              array('value'=>$this->fields['frequency'],
+                                    'rand'=>$randname));
+      echo '<span id="dropdownSendingDay">';
+      if (isset($this->fields['frequency'])) {
+        switch ($this->fields['frequency']) {
+          case 604800: Dropdown::showFromArray('sending_day',
+                        array(1=>__('Sunday'),
+                              2=>__('Monday'),
+                              3=>__('Tuesday'),
+                              4=>__('Wednesday'),
+                              5=>__('Thursday'),
+                              6=>__('Friday'),
+                              7=>__('Saturday')),
+                        array('value'=>$this->fields['sending_day']));
+                        break;
+          case 2592000: Dropdown::showNumber('sending_day',
+                                              array('min'=>1,
+                                                    'max'=>31,
+                                                    'value'=>$this->fields['sending_day']));
+                        break;
+        }
+      }
+      echo '</span>';
+      Ajax::updateItemOnSelectEvent("dropdown_frequency$randname",
+                                    'dropdownSendingDay',
+                                    '../ajax/dropdownSendingDay.php',
+                                    array('value'=>'__VALUE__',
+                                          'id'=>$this->fields['id']));
+      Dropdown::showHours('sending_hour', array('value'=>$this->fields['sending_hour']));
       echo "</td>";
       echo "</tr>";
+
+      if (isset($_GET['id']) && $_GET['id'] > 0) {
+        if (is_null($this->fields['lastrun'])) {
+          $lastrun      = __('Never');
+          $nextrun      = __('As soon as possible');
+          $lastrunInput = '';
+        }
+        else {
+          $lastrun      = $this->fields['lastrun'];
+          $frequency    = $this->fields['frequency'];
+          $hour         = $this->fields['sending_hour'];
+          $nextrun      = $this->fields['nextrun'];
+          $lastrunInput = "<input type='hidden' name='lastrun' value='$lastrun' />";
+        }
+        echo '<tr><td>'.__('Last run')."</td><td>{$lastrunInput}$lastrun</td></tr>'";
+        echo '<tr><td>'.__('Next run')."</td><td>$nextrun</td></tr></table>";
+      }
 
       $this->showFormButtons($options);
       return true;
@@ -276,16 +326,16 @@ class PluginMreportingNotification extends Notification {
       $entity_where = getEntitiesRestrictRequest("AND", "glpi_plugin_mreporting_notifications", 'entities_id', $entity, true);
 
       $query = "SELECT `glpi_plugin_mreporting_notifications`.*
-               FROM `glpi_plugin_mreporting_notifications`
-               LEFT JOIN `glpi_entities`
+                FROM `glpi_plugin_mreporting_notifications`
+                LEFT JOIN `glpi_entities`
                   ON (`glpi_entities`.`id` = `glpi_plugin_mreporting_notifications`.`entities_id`)
-               WHERE `glpi_plugin_mreporting_notifications`.`itemtype` = '$itemtype' 
+                WHERE `glpi_plugin_mreporting_notifications`.`itemtype` = '$itemtype' 
                   AND `glpi_plugin_mreporting_notifications`.`event` = '$event' 
                   $entity_where
                   AND `glpi_plugin_mreporting_notifications`.report > 0 
                   AND `glpi_plugin_mreporting_notifications`.notificationtemplates_id != 0
                   AND `glpi_plugin_mreporting_notifications`.`is_active` = '1'
-                ORDER BY `glpi_entities`.`level` DESC";
+                  ORDER BY `glpi_entities`.`level` DESC";
 
       return $DB->request($query);
    }
@@ -342,7 +392,6 @@ class PluginMreportingNotification extends Notification {
     * @param $mailing_options
    **/
    static function send($mailing_options) {
-
       $mail = new PluginMreportingNotificationMail();
       $mail->sendNotification($mailing_options);
    }
