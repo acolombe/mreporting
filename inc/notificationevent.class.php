@@ -94,7 +94,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
 
               if ($nextrunTimestamp < $sendingTimestamp &&
                   $sendingTimestamp <= strtotime('last day of next month')) {
-                  $nextrunTimestamp = $var;
+                  $nextrunTimestamp = $sendingTimestamp;
               }
 
             }
