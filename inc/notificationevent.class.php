@@ -79,12 +79,24 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
 
             $options['start']   = date('Y-m-d 00:01:00', strtotime($start));
             $options['end']     = date('Y-m-d 23:59:00', strtotime($end));
-            
-            // if frequency = month & time+frequency > last day of next month :
-            // nextrun = last day of next month
+
             $nextrunTimestamp   = time()+$frequency;
-            if ($frequency == 2592000 && $nextrunTimestamp > strtotime('last day of next month')) {
-              $nextrunTimestamp = strtotime('last day of next month');
+
+            // if frequency = month
+            if ($frequency == 2592000) {
+
+              // if time + frequency > last day of next month
+              if ($nextrunTimestamp > strtotime('last day of next month')) {
+                  $nextrunTimestamp = strtotime('last day of next month');
+              }
+
+              $sendingTimestamp = mktime(0,0,0,date('m')+1,$data['sending_day'],date('Y'));
+
+              if ($nextrunTimestamp < $sendingTimestamp &&
+                  $sendingTimestamp <= strtotime('last day of next month')) {
+                  $nextrunTimestamp = $var;
+              }
+
             }
 
             // Update lastrun/nextrun
