@@ -58,8 +58,8 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
             if (
               $nextrun    !== NULL          && $timestamp < $nextrun      ||
               $nextrun     == NULL          && $hour      < $sendingHour  ||
-              $frequency   == 604800        && $weekDay   !== $sendingDay ||
-              $frequency   == 2592000       && $monthDay  !== $sendingDay
+              $frequency   == 604800        && $weekDay   != $sendingDay  ||
+              $frequency   == 2592000       && $monthDay  != $sendingDay
             ) {
               continue; // skip current notification
             }
