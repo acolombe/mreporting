@@ -176,18 +176,22 @@ class PluginMreportingNotification extends Notification {
 
       if (isset($_GET['id']) && $_GET['id'] > 0) {
         if (is_null($this->fields['lastrun'])) {
+          $resetRunsBtn = NULL;
           $lastrun      = __('Never');
           $nextrun      = __('As soon as possible');
           $lastrunInput = '';
         }
         else {
+          $action = $CFG_GLPI['root_doc'].'/plugins/mreporting/front/notification.form.php';
+          $resetRunsBtn = Html::getSimpleForm($action, 'resetRuns', 'Reset',
+                          $this->fields, $CFG_GLPI['root_doc']."/pics/reset.png");
           $lastrun      = $this->fields['lastrun'];
           $frequency    = $this->fields['frequency'];
           $hour         = $this->fields['sending_hour'];
           $nextrun      = $this->fields['nextrun'];
           $lastrunInput = "<input type='hidden' name='lastrun' value='$lastrun' />";
         }
-        echo '<tr><td>'.__('Last run')."</td><td>{$lastrunInput}$lastrun</td></tr>'";
+        echo '<tr><td>'.__('Last run')."</td><td>{$lastrunInput}$lastrun $resetRunsBtn</td></tr>'";
         echo '<tr><td>'.__('Next run')."</td><td>$nextrun</td></tr></table>";
       }
 
@@ -416,4 +420,12 @@ class PluginMreportingNotification extends Notification {
       PluginMreportingNotificationEvent::raiseEvent('sendReporting', new self(), $task->fields);
       return 1;
    }
+
+   function resetRuns($id) {
+    global $DB;
+    $table = $this->getTable();
+    $query = "UPDATE $table SET lastrun = NULL, nextrun = NULL WHERE id = $id";
+    $DB->query($query);
+   }
+
 }

@@ -60,6 +60,9 @@ if (isset($_POST["add"])) {
    }
    Html::back();
 
+} else if (isset($_POST['resetRuns'])) {
+  $notification->resetRuns($_POST['id']);
+  Html::back();
 } else {
    $title = PluginMreportingNotification::getTypeName(Session::getPluralNumber());
    Html::header($title, '' ,'tools', 'PluginMreportingCommon', 'notification');
