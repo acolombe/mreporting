@@ -213,12 +213,7 @@ class PluginMreportingNotificationTargetNotification extends NotificationTarget 
          $image_width   = imagesx($image);
          $image_height  = imagesy($image);
 
-         $format = '%e';
-         if (strftime('%Y', strtotime($graph['start'])) != strftime('%Y', strtotime($graph['end']))) {
-            $format .= ' %B %Y';
-         } elseif(strftime('%B', strtotime($graph['start'])) != strftime('%B', strtotime($graph['end']))) {
-            $format .= ' %B';
-         }
+         $format = '%e %B %Y';
 
          $image_title  = $LANG['plugin_mreporting'][$graph['class']][$graph['method']]['title'];
          $image_title .= " du ".strftime($format, strtotime($graph['start']));
