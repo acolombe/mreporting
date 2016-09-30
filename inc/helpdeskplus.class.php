@@ -605,6 +605,10 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
       $_SESSION['mreporting_selector']['reportGlineNbTicketBySla']
          = array('dateinterval', 'period', 'allSlasWithTicket');
 
+      $slas = (isset($_SESSION['mreporting_values']['slas']))
+         ? $_SESSION['mreporting_values']['slas']
+         : NULL;
+
       if (isset($_SESSION['mreporting_values']['slas'])
           && !empty($_SESSION['mreporting_values']['slas'])) {
          //get dates used in this period
@@ -903,6 +907,10 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
                                                                   $config['delay'],
                                                                   $config['randname']);
 
+      $slas = (isset($_SESSION['mreporting_values']['slas']))
+         ? $_SESSION['mreporting_values']['slas']
+         : NULL;
+
       if (isset($_SESSION['mreporting_values']['slas'])
           && !empty($_SESSION['mreporting_values']['slas'])) {
 
@@ -992,6 +1000,10 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
       $this->sql_date_create = PluginMreportingCommon::getSQLDate("t.date",
                                                                   $config['delay'],
                                                                   $config['randname']);
+
+      $slas = (isset($_SESSION['mreporting_values']['slas']))
+         ? $_SESSION['mreporting_values']['slas']
+         : NULL;
 
       if (isset($_SESSION['mreporting_values']['slas'])
           && !empty($_SESSION['mreporting_values']['slas'])) {
