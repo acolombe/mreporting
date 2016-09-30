@@ -24,7 +24,7 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
       if ($CFG_GLPI["use_mailing"]) {
          $email_notprocessed = array();
 
-         $options['entities_id'] = 0;
+         //$options['entities_id'] = 0;
          $notificationtarget = PluginMreportingNotificationTarget::getInstance($item, $event, $options);
          if (!$notificationtarget) {
             return false;
@@ -56,10 +56,10 @@ class PluginMreportingNotificationEvent extends NotificationEvent {
             }
 
             if (
-              $nextrun    !== NULL          && $timestamp !== $nextrun      ||
-              $hour       !== $sendingHour                                  ||
-              $frequency   == 604800        && $weekDay   !== $sendingDay   ||
-              $frequency   == 2592000       && $monthDay  !== $sendingDay
+              $nextrun    !== NULL          && $timestamp < $nextrun        ||
+              $nextrun     == NULL          && $hour      < $sendingHour    ||
+              $frequency   == 604800        && $weekDay   != $sendingDay    ||
+              $frequency   == 2592000       && $monthDay  != $sendingDay
             ) {
               continue; // skip current notification
             }

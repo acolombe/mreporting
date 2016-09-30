@@ -1471,7 +1471,9 @@ class PluginMreportingCommon extends CommonDBTM {
       $query = "SELECT DISTINCT s.id,
          s.name
       FROM glpi_slas s
-      INNER JOIN glpi_tickets t ON s.id = t.slas_id
+      INNER JOIN glpi_slts slt ON s.id = slt.slas_id
+      INNER JOIN glpi_tickets t ON slt.id = t.slts_tto_id
+                                OR slt.id = t.slts_ttr_id
       WHERE t.status IN (" . implode(
             ',',
             array_merge(Ticket::getSolvedStatusArray(), Ticket::getClosedStatusArray())
