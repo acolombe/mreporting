@@ -6,34 +6,45 @@ if (!defined('GLPI_ROOT')) {
 
 class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
 
-   protected $sql_group_assign  = "1=1",
-             $sql_group_request = "1=1",
-             $sql_user_assign   = "1=1",
-             $sql_type          = "glpi_tickets.type IN (".Ticket::INCIDENT_TYPE.", ".Ticket::DEMAND_TYPE.")",
-             $sql_itilcat       = "1=1",
-
-             $sql_join_cat      = "LEFT JOIN glpi_itilcategories cat
-                                       ON glpi_tickets.itilcategories_id = cat.id",
-             $sql_join_g        = "LEFT JOIN glpi_groups g
-                                       ON gt.groups_id = g.id",
-             $sql_join_u        = "LEFT JOIN glpi_users u
-                                       ON tu.users_id = u.id",
-             $sql_join_tt       = "LEFT JOIN glpi_tickettasks tt
-                                       ON tt.tickets_id  = glpi_tickets.id",
-             $sql_join_tu       = "LEFT JOIN glpi_tickets_users tu
-                                       ON tu.tickets_id = glpi_tickets.id
-                                       AND tu.type = ".Ticket_User::ASSIGN,
-             $sql_join_gt       = "LEFT JOIN glpi_groups_tickets gt
-                                       ON gt.tickets_id  = glpi_tickets.id
-                                       AND gt.type = ".Group_Ticket::ASSIGN,
-             $sql_join_gtr      = "LEFT JOIN glpi_groups_tickets gtr
-                                       ON gtr.tickets_id = glpi_tickets.id
-                                       AND gtr.type = ".Group_Ticket::REQUESTER;
+   protected   $sql_group_assign,
+               $sql_group_request,
+               $sql_user_assign,
+               $sql_type,
+               $sql_itilcat,
+               $sql_join_cat,
+               $sql_join_g,
+               $sql_join_u,
+               $sql_join_tt,
+               $sql_join_tu,
+               $sql_join_gt,
+               $sql_join_gtr;
 
 
    function __construct($config = array()) {
       global $LANG;
-
+      $this->sql_group_assign  = "1=1";
+      $this->sql_group_request = "1=1";
+      $this->sql_user_assign   = "1=1";
+      $this->sql_type          = "glpi_tickets.type IN (".Ticket::INCIDENT_TYPE.", ".Ticket::DEMAND_TYPE.")";
+      $this->sql_itilcat       = "1=1";
+      $this->sql_join_cat      = "LEFT JOIN glpi_itilcategories cat
+                              ON glpi_tickets.itilcategories_id = cat.id";
+      $this->sql_join_g        = "LEFT JOIN glpi_groups g
+                              ON gt.groups_id = g.id";
+      $this->sql_join_u        = "LEFT JOIN glpi_users u
+                              ON tu.users_id = u.id";
+      $this->sql_join_tt       = "LEFT JOIN glpi_tickettasks tt
+                              ON tt.tickets_id  = glpi_tickets.id";
+      $this->sql_join_tu       = "LEFT JOIN glpi_tickets_users tu
+                              ON tu.tickets_id = glpi_tickets.id
+                              AND tu.type = ".Ticket_User::ASSIGN;
+      $this->sql_join_gt       = "LEFT JOIN glpi_groups_tickets gt
+                              ON gt.tickets_id  = glpi_tickets.id
+                              AND gt.type = ".Group_Ticket::ASSIGN;
+      $this->sql_join_gtr      = "LEFT JOIN glpi_groups_tickets gtr
+                              ON gtr.tickets_id = glpi_tickets.id
+                              AND gtr.type = ".Group_Ticket::REQUESTER;
+                                       
       parent::__construct($config);
 
       $this->lcl_slaok = $LANG['plugin_mreporting']['Helpdeskplus']['slaobserved'];
@@ -601,8 +612,8 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
          $query_date = "SELECT DISTINCT DATE_FORMAT(`date`, '{$this->period_sort}') AS period,
             DATE_FORMAT(`date`, '{$this->period_label}') AS period_name
          FROM `glpi_tickets`
-         INNER JOIN `glpi_slas` s
-            ON slas_id = s.id
+         INNER JOIN `glpi_slts` s
+            ON slts_ttr_id = s.id
          WHERE {$this->sql_date_create}
             AND status IN (" . implode(
                   ',',
@@ -629,10 +640,10 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
             DATE_FORMAT(`date`, '{$this->period_label}') AS period_name,
             count(glpi_tickets.id) AS nb,
             s.name,
-            CASE WHEN solve_delay_stat <= s.resolution_time THEN 'ok' ELSE 'nok' END AS respected_sla
+            CASE WHEN solve_delay_stat <= s.number_time THEN 'ok' ELSE 'nok' END AS respected_sla
          FROM `glpi_tickets`
-         INNER JOIN `glpi_slas` s
-            ON slas_id = s.id
+         INNER JOIN `glpi_slts` s
+            ON slts_ttr_id = s.id
          WHERE {$this->sql_date_create}
          AND status IN (" . implode(
                ',',
@@ -693,8 +704,8 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
             count(glpi_tickets.id) as nb,
             c.id
          FROM glpi_tickets
-         INNER JOIN glpi_slas s
-            ON glpi_tickets.slas_id = s.id
+         INNER JOIN glpi_slts s
+            ON glpi_tickets.slts_ttr_id = s.id
          INNER JOIN glpi_itilcategories c
             ON glpi_tickets.itilcategories_id = c.id
          WHERE " . $this->sql_date_create . "
@@ -711,15 +722,15 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
       }
 
       $query = "SELECT COUNT(glpi_tickets.id) as nb,
-            CASE WHEN glpi_tickets.solve_delay_stat <= s.resolution_time
+            CASE WHEN glpi_tickets.solve_delay_stat <= s.number_time
                THEN 'ok'
                ELSE 'nok'
             END AS respected_sla,
             c.id,
             c.name
          FROM glpi_tickets
-         INNER JOIN glpi_slas s
-            ON glpi_tickets.slas_id = s.id
+         INNER JOIN glpi_slts s
+            ON glpi_tickets.slts_ttr_id = s.id
          INNER JOIN glpi_itilcategories c
             ON glpi_tickets.itilcategories_id = c.id
          WHERE " . $this->sql_date_create . "
@@ -763,13 +774,13 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
             CONCAT(u.firstname, ' ', u.realname) as fullname,
             u.id,
             COUNT(glpi_tickets.id) as nb,
-            CASE WHEN glpi_tickets.solve_delay_stat <= s.resolution_time
+            CASE WHEN glpi_tickets.solve_delay_stat <= s.number_time
                THEN 'ok'
                ELSE 'nok'
             END AS respected_sla
          FROM glpi_tickets
-         INNER JOIN glpi_slas s
-            ON glpi_tickets.slas_id = s.id
+         INNER JOIN glpi_slts s
+            ON glpi_tickets.slts_ttr_id = s.id
          INNER JOIN glpi_tickets_users tu
             ON tu.tickets_id = glpi_tickets.id
             AND tu.type = " . Ticket_User::ASSIGN . "
@@ -893,7 +904,7 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
          $query = "SELECT COUNT(t.id) AS nb,
                gt.groups_id as groups_id,
                s.name,
-               CASE WHEN t.solve_delay_stat <= s.resolution_time
+               CASE WHEN t.solve_delay_stat <= s.number_time
                THEN 'ok'
                ELSE 'nok'
                END AS respected_sla
@@ -901,7 +912,7 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
             INNER JOIN `glpi_groups_tickets` gt
                ON gt.tickets_id = t.id
                AND gt.type = ".CommonITILActor::ASSIGN."
-            INNER JOIN `glpi_slas` s ON t.slas_id = s.id
+            INNER JOIN `glpi_slts` s ON t.slts_ttr_id = s.id
             WHERE {$this->sql_date_create}
                AND t.status IN (" . implode(
                            ',',
@@ -977,12 +988,12 @@ class PluginMreportingHelpdeskplus Extends PluginMreportingBaseclass {
           && !empty($_SESSION['mreporting_values']['slas'])) {
 
          $query = "SELECT count(t.id) AS nb, s.name,
-                       CASE WHEN t.solve_delay_stat <= s.resolution_time
+                       CASE WHEN t.solve_delay_stat <= s.number_time
                         THEN 'ok'
                         ELSE 'nok'
                         END AS respected_sla
                      FROM `glpi_tickets` t
-                     INNER JOIN `glpi_slas` s ON t.slas_id = s.id
+                     INNER JOIN `glpi_slts` s ON t.slts_ttr_id = s.id
                      WHERE {$this->sql_date_create}
                      AND t.status IN (" . implode(',',
                               array_merge(Ticket::getSolvedStatusArray(), Ticket::getClosedStatusArray())
