@@ -17,7 +17,7 @@ $LANG['plugin_mreporting']['Other'] = array(
    ),
 
    'reportHbarConsumablesAffected' => array(
-      'title'    => "Affectations des consommable",
+      'title'    => "Affectations des consommables",
       'desc'     => "Barres",
       'category' => "Consumables",
    )
