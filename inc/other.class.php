@@ -120,6 +120,77 @@ class PluginMreportingOther Extends PluginMreportingBaseclass {
       return $datas;
    }
 
+   function reportHbarConsumablesTypes($configs = array()) {
+      global $DB;
+
+      $query = "SELECT cit.name, COUNT(*) AS nb
+                FROM glpi_consumables c
+                INNER JOIN glpi_consumableitems       ci    ON ci.id    = c.consumableitems_id
+                INNER JOIN glpi_consumableitemtypes   cit   ON cit.id   = ci.consumableitemtypes_id
+                GROUP BY ci.consumableitemtypes_id";
+      $result = $DB->query($query);
+
+      $datas = array();
+
+      foreach ($result as $item) {
+         $datas['datas'][$item['name']] = $item['nb'];
+      }
+
+      $datas['labels2'] = 'Types';
+      return $datas;
+
+   }
+
+   function reportHbarConsumablesAffected($configs = array()) {
+      global $DB;
+
+      $queryNoAffectation  = "SELECT 'Sans affectation' AS name, COUNT(*) AS nb
+                              FROM glpi_consumables c
+                              LEFT JOIN glpi_consumableitems   ci ON ci.id = c.consumableitems_id
+                              LEFT JOIN glpi_users             u  ON u.id  = ci.users_id_tech
+                              LEFT JOIN glpi_groups            g  ON g.id  = ci.groups_id_tech
+                              WHERE ci.users_id_tech = 0 AND ci.groups_id_tech = 0 AND c.itemtype IS NULL
+                              GROUP BY u.name";
+
+      $queryByUser         = "SELECT u.name AS name, COUNT(*) AS nb
+                              FROM glpi_consumables c
+                              LEFT JOIN glpi_consumableitems   ci ON ci.id = c.consumableitems_id
+                              LEFT JOIN glpi_users             u  ON u.id  = ci.users_id_tech
+                              WHERE u.name IS NOT NULL
+                              GROUP BY u.name";
+
+      $queryByGroup        = "SELECT g.name AS name, COUNT(*) AS nb
+                              FROM glpi_consumables c
+                              LEFT JOIN glpi_consumableitems   ci ON ci.id = c.consumableitems_id
+                              LEFT JOIN glpi_groups            g  ON g.id  = ci.groups_id_tech
+                              WHERE g.name IS NOT NULL
+                              GROUP BY g.name";
+
+      $queryByHardware     = "SELECT itemtype AS name, COUNT(*) AS nb
+                              FROM glpi_consumables
+                              WHERE itemtype IS NOT NULL
+                              GROUP BY itemtype";
+
+      $results   = array();
+      $results[] = $DB->query($queryNoAffectation);
+      $results[] = $DB->query($queryByUser);
+      $results[] = $DB->query($queryByGroup);
+      $results[] = $DB->query($queryByHardware);
+
+      $datas = array();
+
+      foreach ($results as $result) {
+         foreach ($result as $item) {
+            $datas['datas'][$item['name']] = $item['nb'];
+         }
+      }
+      
+      $datas['labels2'] = __('Numbers');
+
+      return $datas;
+
+   }
+
    /**
    * Preconfig datas with your values when init config is done
    *
