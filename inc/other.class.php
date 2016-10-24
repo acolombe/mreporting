@@ -124,10 +124,10 @@ class PluginMreportingOther Extends PluginMreportingBaseclass {
       global $DB;
 
       $query = "SELECT cit.name, COUNT(*) AS nb
-                FROM glpi_consumables c
-                INNER JOIN glpi_consumableitems       ci    ON ci.id    = c.consumableitems_id
-                INNER JOIN glpi_consumableitemtypes   cit   ON cit.id   = ci.consumableitemtypes_id
-                GROUP BY ci.consumableitemtypes_id";
+                FROM glpi_cartridges c
+                INNER JOIN glpi_cartridgeitems       ci    ON ci.id    = c.cartridgeitems_id
+                INNER JOIN glpi_cartridgeitemtypes   cit   ON cit.id   = ci.cartridgeitemtypes_id
+                GROUP BY ci.cartridgeitemtypes_id";
       $result = $DB->query($query);
 
       $datas = array();
@@ -145,31 +145,32 @@ class PluginMreportingOther Extends PluginMreportingBaseclass {
       global $DB;
 
       $queryNoAffectation  = "SELECT 'Sans affectation' AS name, COUNT(*) AS nb
-                              FROM glpi_consumables c
-                              LEFT JOIN glpi_consumableitems   ci ON ci.id = c.consumableitems_id
+                              FROM glpi_cartridges c
+                              LEFT JOIN glpi_cartridgeitems    ci ON ci.id = c.cartridgeitems_id
                               LEFT JOIN glpi_users             u  ON u.id  = ci.users_id_tech
                               LEFT JOIN glpi_groups            g  ON g.id  = ci.groups_id_tech
-                              WHERE ci.users_id_tech = 0 AND ci.groups_id_tech = 0 AND c.itemtype IS NULL
+                              WHERE ci.users_id_tech = 0 AND ci.groups_id_tech = 0
                               GROUP BY u.name";
 
       $queryByUser         = "SELECT u.name AS name, COUNT(*) AS nb
-                              FROM glpi_consumables c
-                              LEFT JOIN glpi_consumableitems   ci ON ci.id = c.consumableitems_id
+                              FROM glpi_cartridges c
+                              LEFT JOIN glpi_cartridgeitems    ci ON ci.id = c.cartridgeitems_id
                               LEFT JOIN glpi_users             u  ON u.id  = ci.users_id_tech
                               WHERE u.name IS NOT NULL
                               GROUP BY u.name";
 
       $queryByGroup        = "SELECT g.name AS name, COUNT(*) AS nb
-                              FROM glpi_consumables c
-                              LEFT JOIN glpi_consumableitems   ci ON ci.id = c.consumableitems_id
+                              FROM glpi_cartridges c
+                              LEFT JOIN glpi_cartridgeitems    ci ON ci.id = c.cartridgeitems_id
                               LEFT JOIN glpi_groups            g  ON g.id  = ci.groups_id_tech
                               WHERE g.name IS NOT NULL
                               GROUP BY g.name";
 
-      $queryByHardware     = "SELECT itemtype AS name, COUNT(*) AS nb
-                              FROM glpi_consumables
-                              WHERE itemtype IS NOT NULL
-                              GROUP BY itemtype";
+      $queryByHardware     = "SELECT p.name, COUNT(*) AS nb
+                              FROM glpi_cartridges c
+                              LEFT JOIN glpi_printers p ON p.id = c.printers_id
+                              WHERE p.name IS NOT NULL
+                              GROUP BY p.name";
 
       $results   = array();
       $results[] = $DB->query($queryNoAffectation);
